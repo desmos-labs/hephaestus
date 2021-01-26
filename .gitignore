@@ -1,0 +1,10 @@
+# Build
+.idea/
+build/
+
+# Configuration
+*.toml
+*.json
+
+# Coverage
+coverage.*
