@@ -2,19 +2,25 @@ package bot
 
 import (
 	"context"
+
 	"github.com/andersfylling/disgord"
 	"github.com/andersfylling/disgord/std"
+	"github.com/rs/zerolog/log"
+
 	"github.com/desmos-labs/discord-bot/consts"
 	"github.com/desmos-labs/discord-bot/cosmos"
-	"github.com/rs/zerolog/log"
 )
 
+// Bot represents the object that should be used to interact with Discord
 type Bot struct {
+	prefix string
+
 	discord      *disgord.Client
 	cosmosClient *cosmos.Client
 }
 
-func Create(token string, cosmosClient *cosmos.Client) (*Bot, error) {
+// Create allows to build a new Bot instance
+func Create(prefix string, token string, cosmosClient *cosmos.Client) (*Bot, error) {
 	discordClient := disgord.New(disgord.Config{
 		ProjectName: consts.AppName,
 		BotToken:    token,
@@ -37,18 +43,20 @@ func Create(token string, cosmosClient *cosmos.Client) (*Bot, error) {
 	})
 
 	return &Bot{
+		prefix:       prefix,
 		discord:      discordClient,
 		cosmosClient: cosmosClient,
 	}, nil
 }
 
+// Start starts the bot so that it can listen to events properly
 func (bot *Bot) Start() {
 	defer bot.discord.Gateway().StayConnectedUntilInterrupted()
 
 	// Create a middleware that only accepts messages with a "ping" prefix
 	// tip: use this to identify bot commands
 	filter, _ := std.NewMsgFilter(context.Background(), bot.discord)
-	filter.SetPrefix(consts.Prefix)
+	filter.SetPrefix(bot.prefix)
 
 	handler := bot.discord.Gateway().
 		WithMiddleware(
@@ -59,6 +67,7 @@ func (bot *Bot) Start() {
 	handler.MessageCreate(bot.replyPongToPing, bot.handleSendTokens)
 }
 
+// Reply sends a Discord message as a reply to the given msg
 func (bot *Bot) Reply(msg *disgord.Message, s disgord.Session, message string) {
 	_, err := msg.Reply(context.Background(), s, &disgord.CreateMessageParams{
 		MessageReference: &disgord.MessageReference{
@@ -73,6 +82,7 @@ func (bot *Bot) Reply(msg *disgord.Message, s disgord.Session, message string) {
 	}
 }
 
+// React allows to react with the provided emoji to the given message
 func (bot *Bot) React(msg *disgord.Message, s disgord.Session, emoji interface{}, flags ...disgord.Flag) {
 	err := msg.React(context.Background(), s, emoji, flags...)
 	if err != nil {

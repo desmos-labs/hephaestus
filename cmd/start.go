@@ -1,10 +1,11 @@
 package cmd
 
 import (
+	"github.com/spf13/cobra"
+
 	"github.com/desmos-labs/discord-bot/bot"
 	"github.com/desmos-labs/discord-bot/config"
 	"github.com/desmos-labs/discord-bot/cosmos"
-	"github.com/spf13/cobra"
 )
 
 // StartCmd returns a Cobra command allowing to start the bot
@@ -26,8 +27,14 @@ func StartCmd() *cobra.Command {
 				return err
 			}
 
+			// Get the prefix
+			var prefix = "!"
+			if cfg.BotConfig.Prefix != "" {
+				prefix = cfg.BotConfig.Prefix
+			}
+
 			// Create the bot
-			hephaestus, err := bot.Create(cfg.Token, cosmosClient)
+			hephaestus, err := bot.Create(prefix, cfg.BotConfig.Token, cosmosClient)
 			if err != nil {
 				return err
 			}

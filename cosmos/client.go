@@ -8,10 +8,12 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/desmos-labs/desmos/app"
-	"github.com/desmos-labs/discord-bot/config"
 	rpchttp "github.com/tendermint/tendermint/rpc/client/http"
+
+	"github.com/desmos-labs/discord-bot/config"
 )
 
+// Client represents a Cosmos client that should be used to create and send transactions to the chain
 type Client struct {
 	cliCtx client.Context
 
@@ -20,6 +22,7 @@ type Client struct {
 	fees string
 }
 
+// NewClient allows to build a new Client instance
 func NewClient(accCfg *config.AccountConfig, chainCfg *config.ChainConfig) (*Client, error) {
 	// Get the private keys
 	algo := hd.Secp256k1
@@ -69,6 +72,7 @@ func NewClient(accCfg *config.AccountConfig, chainCfg *config.ChainConfig) (*Cli
 	}, nil
 }
 
-func (client *Client) Address() string {
+// AccAddress returns the address of the account that is going to be used to sign the transactions
+func (client *Client) AccAddress() string {
 	return sdk.AccAddress(client.privKey.PubKey().Address()).String()
 }

@@ -1,9 +1,11 @@
 package main
 
 import (
-	"github.com/desmos-labs/discord-bot/cmd"
-	"github.com/rs/zerolog/log"
 	"os"
+
+	"github.com/rs/zerolog/log"
+
+	"github.com/desmos-labs/discord-bot/cmd"
 )
 
 func main() {

@@ -3,6 +3,7 @@ package cosmos
 import (
 	"encoding/hex"
 	"fmt"
+
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
@@ -10,20 +11,21 @@ import (
 	"github.com/spf13/pflag"
 )
 
-func BroadcastTx(cosmosClient *Client, msg sdk.Msg) error {
+// BroadcastTx allows to broadcast a transaction containing the given messages
+func (client *Client) BroadcastTx(msgs ...sdk.Msg) error {
 	// Build the factory CLI
-	factoryCLI := tx.NewFactoryCLI(cosmosClient.cliCtx, &pflag.FlagSet{}).
-		WithFees(cosmosClient.fees).
+	factoryCLI := tx.NewFactoryCLI(client.cliCtx, &pflag.FlagSet{}).
+		WithFees(client.fees).
 		WithSignMode(signing.SignMode_SIGN_MODE_DIRECT)
 
 	// Create the factory
-	factory, err := tx.PrepareFactory(cosmosClient.cliCtx, factoryCLI)
+	factory, err := tx.PrepareFactory(client.cliCtx, factoryCLI)
 	if err != nil {
 		return err
 	}
 
 	// Build an unsigned transaction
-	builder, err := tx.BuildUnsignedTx(factory, msg)
+	builder, err := tx.BuildUnsignedTx(factory, msgs...)
 	if err != nil {
 		return err
 	}
@@ -37,8 +39,8 @@ func BroadcastTx(cosmosClient *Client, msg sdk.Msg) error {
 			Sequence:      factory.Sequence(),
 		},
 		builder,
-		cosmosClient.privKey,
-		cosmosClient.cliCtx.TxConfig,
+		client.privKey,
+		client.cliCtx.TxConfig,
 		factory.Sequence(),
 	)
 	if err != nil {
@@ -52,7 +54,7 @@ func BroadcastTx(cosmosClient *Client, msg sdk.Msg) error {
 	}
 
 	// Encode the transaction
-	txBytes, err := cosmosClient.cliCtx.TxConfig.TxEncoder()(builder.GetTx())
+	txBytes, err := client.cliCtx.TxConfig.TxEncoder()(builder.GetTx())
 	if err != nil {
 		return err
 	}
@@ -61,10 +63,10 @@ func BroadcastTx(cosmosClient *Client, msg sdk.Msg) error {
 	fmt.Println(hex.EncodeToString(data.Signature))
 
 	// Broadcast the transaction to a Tendermint node
-	res, err := cosmosClient.cliCtx.BroadcastTx(txBytes)
+	res, err := client.cliCtx.BroadcastTx(txBytes)
 	if err != nil {
 		return err
 	}
 
-	return cosmosClient.cliCtx.PrintProto(res)
+	return client.cliCtx.PrintProto(res)
 }
