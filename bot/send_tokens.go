@@ -1,6 +1,7 @@
 package bot
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/andersfylling/disgord"
@@ -10,6 +11,7 @@ import (
 	"github.com/desmos-labs/discord-bot/consts"
 )
 
+// handleSendTokens handles the sending of tokens to a user that asks them
 func (bot *Bot) handleSendTokens(s disgord.Session, data *disgord.MessageCreate) {
 	// Consider only those messages starting with "send"
 	msg := data.Message
@@ -20,7 +22,7 @@ func (bot *Bot) handleSendTokens(s disgord.Session, data *disgord.MessageCreate)
 	// Get the recipient
 	parts := strings.Split(msg.Content, " ")
 	if len(parts) < 2 {
-		bot.Reply(msg, s, "Test")
+		bot.Reply(msg, s, "Missing recipient")
 		bot.React(msg, s, consts.ReactionWarning)
 	}
 
@@ -30,8 +32,13 @@ func (bot *Bot) handleSendTokens(s disgord.Session, data *disgord.MessageCreate)
 		ToAddress:   parts[1],
 		Amount:      sdk.NewCoins(sdk.NewCoin("udaric", sdk.NewInt(100000))),
 	}
-	err := bot.cosmosClient.BroadcastTx(txMsg)
+
+	res, err := bot.cosmosClient.BroadcastTx(txMsg)
 	if err != nil {
+		bot.React(msg, s, consts.ReactionWarning)
 		bot.Reply(msg, s, err.Error())
+	} else {
+		bot.React(msg, s, consts.ReactionDone)
+		bot.Reply(msg, s, fmt.Sprintf("Tokens sent with transaction `%s`", res.TxHash))
 	}
 }

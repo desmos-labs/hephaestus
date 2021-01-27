@@ -64,7 +64,7 @@ func (bot *Bot) Start() {
 			filter.HasPrefix,   // Message must have the given prefix
 			filter.StripPrefix, // Remove the command prefix from the message
 		)
-	handler.MessageCreate(bot.replyPongToPing, bot.handleSendTokens)
+	handler.MessageCreate(bot.handleSendTokens)
 }
 
 // Reply sends a Discord message as a reply to the given msg
