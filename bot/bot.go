@@ -51,7 +51,10 @@ func Create(prefix string, token string, cosmosClient *cosmos.Client) (*Bot, err
 
 // Start starts the bot so that it can listen to events properly
 func (bot *Bot) Start() {
+	// nolint:errcheck
 	defer bot.discord.Gateway().StayConnectedUntilInterrupted()
+
+	log.Debug().Msg("starting bot")
 
 	// Create a middleware that only accepts messages with a "ping" prefix
 	// tip: use this to identify bot commands
@@ -65,6 +68,8 @@ func (bot *Bot) Start() {
 			filter.StripPrefix, // Remove the command prefix from the message
 		)
 	handler.MessageCreate(bot.handleSendTokens)
+
+	log.Debug().Msg("listening for messages...")
 }
 
 // Reply sends a Discord message as a reply to the given msg

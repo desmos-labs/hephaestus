@@ -5,4 +5,6 @@ const (
 
 	ReactionWarning = "⚠️"
 	ReactionDone    = "✅"
+
+	LogCommand = "command"
 )
