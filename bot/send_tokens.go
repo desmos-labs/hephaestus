@@ -59,7 +59,7 @@ func (bot *Bot) HandleSendTokens(s disgord.Session, data *disgord.MessageCreate)
 	txMsg := &banktypes.MsgSend{
 		FromAddress: bot.cosmosClient.AccAddress(),
 		ToAddress:   addr.String(),
-		Amount:      sdk.NewCoins(sdk.NewCoin("udaric", sdk.NewInt(100000))),
+		Amount:      sdk.NewCoins(sdk.NewCoin("udaric", sdk.NewInt(2000000))),
 	}
 
 	// Send the transaction
