@@ -45,6 +45,9 @@ func Create(
 			disgord.EvtGuildMemberUpdate,
 			disgord.EvtGuildMemberRemove,
 		},
+		DMIntents: disgord.IntentDirectMessages |
+			disgord.IntentDirectMessageReactions |
+			disgord.IntentDirectMessageTyping,
 		Presence: &disgord.UpdateStatusPayload{
 			Game: &disgord.Activity{
 				Name: "Welcome users!",
@@ -77,19 +80,19 @@ func (bot *Bot) Start() {
 			filter.HasPrefix,   // Message must have the given prefix
 			filter.StripPrefix, // Remove the command prefix from the message
 		)
-	handler.MessageCreate(bot.HandleSendTokens)
+	handler.MessageCreate(
+		bot.HandleHelp,
+		bot.HandleDocs,
+		bot.HandleSendTokens,
+	)
 
 	log.Debug().Msg("listening for messages...")
 }
 
 // Reply sends a Discord message as a reply to the given msg
 func (bot *Bot) Reply(msg *disgord.Message, s disgord.Session, message string) {
-	_, err := msg.Reply(context.Background(), s, &disgord.CreateMessageParams{
-		MessageReference: &disgord.MessageReference{
-			MessageID: msg.ID,
-			ChannelID: msg.ChannelID,
-			GuildID:   msg.GuildID,
-		},
+	_, _, err := msg.Author.SendMsg(context.Background(), s, &disgord.Message{
+		Type:    disgord.MessageTypeDefault,
 		Content: message,
 	})
 	if err != nil {
@@ -105,6 +108,7 @@ func (bot *Bot) React(msg *disgord.Message, s disgord.Session, emoji interface{}
 	}
 }
 
+// CheckCommandLimit returns the date on which the given user will be able to run the command again
 func (bot *Bot) CheckCommandLimit(userID disgord.Snowflake, command string) *time.Time {
 	// Try getting the expiration date for the command
 	expirationDate, err := GetLimitationExpiration(userID, command)
@@ -114,13 +118,14 @@ func (bot *Bot) CheckCommandLimit(userID disgord.Snowflake, command string) *tim
 
 	// Check if the user is blocked
 	if expirationDate != nil && time.Now().Before(*expirationDate) {
-		log.Debug().Str(keys.LogCommand, command).Time(LogExpirationEnd, *expirationDate).Msg("user is limited")
+		log.Debug().Str(keys.LogCommand, command).Time(keys.LogExpirationEnd, *expirationDate).Msg("user is limited")
 		return expirationDate
 	}
 
 	return nil
 }
 
+// SetCommandLimitation sets the limitation for the given user for the provided command
 func (bot *Bot) SetCommandLimitation(userID disgord.Snowflake, cmd string) {
 	// Set the expiration
 	commandLimitation := bot.cfg.FindLimitationByCommand(cmd)

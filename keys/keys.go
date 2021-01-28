@@ -17,6 +17,7 @@ const (
 	ReactionDone    = "✅"
 	ReactionTime    = "⌛"
 
-	LogCommand = "command"
-	LogUser    = "user"
+	LogCommand       = "command"
+	LogUser          = "user"
+	LogExpirationEnd = "expiration_end"
 )
