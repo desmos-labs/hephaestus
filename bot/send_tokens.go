@@ -76,7 +76,7 @@ func (bot *Bot) HandleSendTokens(s disgord.Session, data *disgord.MessageCreate)
 		bot.React(msg, s, keys.ReactionDone)
 		bot.Reply(msg, s, fmt.Sprintf(
 			"Your tokens have been sent successfully. You can see it by running `desmos q tx %s`."+
-				"If you balance is not updated in the next seconds, make sure your node is synced.", res.TxHash,
+				"If your balance does not update in the next seconds, make sure your node is synced.", res.TxHash,
 		))
 	}
 }
