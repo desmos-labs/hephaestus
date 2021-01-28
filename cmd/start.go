@@ -22,19 +22,13 @@ func StartCmd() *cobra.Command {
 			}
 
 			// Crete cosmos client
-			cosmosClient, err := cosmos.NewClient(cfg.Account, cfg.ChainConfig)
+			cosmosClient, err := cosmos.NewClient(cfg.ChainConfig)
 			if err != nil {
 				return err
 			}
 
-			// Get the prefix
-			var prefix = "!"
-			if cfg.BotConfig.Prefix != "" {
-				prefix = cfg.BotConfig.Prefix
-			}
-
 			// Create the bot
-			hephaestus, err := bot.Create(prefix, cfg.BotConfig.Token, cosmosClient)
+			hephaestus, err := bot.Create(cfg.BotConfig, cosmosClient)
 			if err != nil {
 				return err
 			}

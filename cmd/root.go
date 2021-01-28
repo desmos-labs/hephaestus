@@ -8,7 +8,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 
-	"github.com/desmos-labs/discord-bot/consts"
+	"github.com/desmos-labs/discord-bot/keys"
 )
 
 const (
@@ -22,8 +22,12 @@ const (
 // RootCmd returns a Cobra command allowing to perform various operations
 func RootCmd() *cobra.Command {
 	rootCmd := &cobra.Command{
-		Use: consts.AppName,
+		Use: keys.AppName,
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+			if _, err := os.Stat(keys.DataDir); os.IsNotExist(err) {
+				_ = os.MkdirAll(keys.DataDir, os.ModePerm)
+			}
+
 			return setupLogging(cmd)
 		},
 		Short: "Discord bot to interact with a Cosmos chain to perform specific transactions using chat commands",

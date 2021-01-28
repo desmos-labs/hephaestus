@@ -2,28 +2,38 @@ package bot
 
 import (
 	"context"
+	"time"
+
+	"github.com/desmos-labs/discord-bot/config"
 
 	"github.com/andersfylling/disgord"
 	"github.com/andersfylling/disgord/std"
 	"github.com/rs/zerolog/log"
 
-	"github.com/desmos-labs/discord-bot/consts"
 	"github.com/desmos-labs/discord-bot/cosmos"
+	"github.com/desmos-labs/discord-bot/keys"
 )
 
 // Bot represents the object that should be used to interact with Discord
 type Bot struct {
-	prefix string
+	cfg *config.BotConfig
 
 	discord      *disgord.Client
 	cosmosClient *cosmos.Client
 }
 
 // Create allows to build a new Bot instance
-func Create(prefix string, token string, cosmosClient *cosmos.Client) (*Bot, error) {
+func Create(
+	cfg *config.BotConfig, cosmosClient *cosmos.Client,
+) (*Bot, error) {
+	// Set the default prefix if empty
+	if cfg.Prefix == "" {
+		cfg.Prefix = "!"
+	}
+
 	discordClient := disgord.New(disgord.Config{
-		ProjectName: consts.AppName,
-		BotToken:    token,
+		ProjectName: keys.AppName,
+		BotToken:    cfg.Token,
 		RejectEvents: []string{
 			// Rarely used, and causes unnecessary spam
 			disgord.EvtTypingStart,
@@ -43,7 +53,7 @@ func Create(prefix string, token string, cosmosClient *cosmos.Client) (*Bot, err
 	})
 
 	return &Bot{
-		prefix:       prefix,
+		cfg:          cfg,
 		discord:      discordClient,
 		cosmosClient: cosmosClient,
 	}, nil
@@ -59,7 +69,7 @@ func (bot *Bot) Start() {
 	// Create a middleware that only accepts messages with a "ping" prefix
 	// tip: use this to identify bot commands
 	filter, _ := std.NewMsgFilter(context.Background(), bot.discord)
-	filter.SetPrefix(bot.prefix)
+	filter.SetPrefix(bot.cfg.Prefix)
 
 	handler := bot.discord.Gateway().
 		WithMiddleware(
@@ -67,7 +77,7 @@ func (bot *Bot) Start() {
 			filter.HasPrefix,   // Message must have the given prefix
 			filter.StripPrefix, // Remove the command prefix from the message
 		)
-	handler.MessageCreate(bot.handleSendTokens)
+	handler.MessageCreate(bot.HandleSendTokens)
 
 	log.Debug().Msg("listening for messages...")
 }
@@ -92,5 +102,32 @@ func (bot *Bot) React(msg *disgord.Message, s disgord.Session, emoji interface{}
 	err := msg.React(context.Background(), s, emoji, flags...)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to reply to message")
+	}
+}
+
+func (bot *Bot) CheckCommandLimit(userID disgord.Snowflake, command string) *time.Time {
+	// Try getting the expiration date for the command
+	expirationDate, err := GetLimitationExpiration(userID, command)
+	if err != nil {
+		panic(err)
+	}
+
+	// Check if the user is blocked
+	if expirationDate != nil && time.Now().Before(*expirationDate) {
+		log.Debug().Str(keys.LogCommand, command).Time(LogExpirationEnd, *expirationDate).Msg("user is limited")
+		return expirationDate
+	}
+
+	return nil
+}
+
+func (bot *Bot) SetCommandLimitation(userID disgord.Snowflake, cmd string) {
+	// Set the expiration
+	commandLimitation := bot.cfg.FindLimitationByCommand(cmd)
+	if commandLimitation != nil {
+		err := SetLimitationExpiration(userID, cmd, time.Now().Add(commandLimitation.Duration))
+		if err != nil {
+			log.Error().Err(err).Str(keys.LogCommand, cmd).Msg("error while setting limitation expiration")
+		}
 	}
 }
