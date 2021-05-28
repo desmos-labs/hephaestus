@@ -8,7 +8,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 
-	"github.com/desmos-labs/discord-bot/keys"
+	"github.com/desmos-labs/hephaestus/types"
 )
 
 const (
@@ -22,10 +22,10 @@ const (
 // RootCmd returns a Cobra command allowing to perform various operations
 func RootCmd() *cobra.Command {
 	rootCmd := &cobra.Command{
-		Use: keys.AppName,
+		Use: types.AppName,
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-			if _, err := os.Stat(keys.DataDir); os.IsNotExist(err) {
-				_ = os.MkdirAll(keys.DataDir, os.ModePerm)
+			if _, err := os.Stat(types.DataDir); os.IsNotExist(err) {
+				_ = os.MkdirAll(types.DataDir, os.ModePerm)
 			}
 
 			return setupLogging(cmd)

@@ -2,37 +2,45 @@ package bot
 
 import (
 	"context"
+	"crypto/rsa"
 	"time"
 
-	"github.com/desmos-labs/discord-bot/config"
+	"github.com/desmos-labs/hephaestus/utils"
+
+	"github.com/desmos-labs/hephaestus/limitations"
 
 	"github.com/andersfylling/disgord"
 	"github.com/andersfylling/disgord/std"
 	"github.com/rs/zerolog/log"
 
-	"github.com/desmos-labs/discord-bot/cosmos"
-	"github.com/desmos-labs/discord-bot/keys"
+	"github.com/desmos-labs/hephaestus/cosmos"
+	"github.com/desmos-labs/hephaestus/types"
 )
 
 // Bot represents the object that should be used to interact with Discord
 type Bot struct {
-	cfg *config.BotConfig
+	cfg       *types.BotConfig
+	themisCfg *types.ThemisConfig
+	privKey   *rsa.PrivateKey
 
 	discord      *disgord.Client
 	cosmosClient *cosmos.Client
 }
 
 // Create allows to build a new Bot instance
-func Create(
-	cfg *config.BotConfig, cosmosClient *cosmos.Client,
-) (*Bot, error) {
+func Create(cfg *types.BotConfig, themisCfg *types.ThemisConfig, cosmosClient *cosmos.Client) (*Bot, error) {
+	privKey, err := utils.ReadPrivateKeyFromFile(cfg.PrivateKeyPath)
+	if err != nil {
+		panic(err)
+	}
+
 	// Set the default prefix if empty
 	if cfg.Prefix == "" {
 		cfg.Prefix = "!"
 	}
 
 	discordClient := disgord.New(disgord.Config{
-		ProjectName: keys.AppName,
+		ProjectName: types.AppName,
 		BotToken:    cfg.Token,
 		RejectEvents: []string{
 			// Rarely used, and causes unnecessary spam
@@ -56,7 +64,10 @@ func Create(
 	})
 
 	return &Bot{
-		cfg:          cfg,
+		cfg:       cfg,
+		themisCfg: themisCfg,
+		privKey:   privKey,
+
 		discord:      discordClient,
 		cosmosClient: cosmosClient,
 	}, nil
@@ -81,9 +92,10 @@ func (bot *Bot) Start() {
 			filter.StripPrefix, // Remove the command prefix from the message
 		)
 	handler.MessageCreate(
-		bot.HandleHelp,
-		bot.HandleDocs,
-		bot.HandleSendTokens,
+		bot.NewCmdHandler(HelpCmd, bot.HandleHelp),
+		bot.NewCmdHandler(DocsCmd, bot.HandleDocs),
+		bot.NewCmdHandler(SendCmd, bot.HandleSendTokens),
+		bot.NewCmdHandler(ConnectCmd, bot.HandleConnect),
 	)
 
 	log.Debug().Msg("listening for messages...")
@@ -111,14 +123,14 @@ func (bot *Bot) React(msg *disgord.Message, s disgord.Session, emoji interface{}
 // CheckCommandLimit returns the date on which the given user will be able to run the command again
 func (bot *Bot) CheckCommandLimit(userID disgord.Snowflake, command string) *time.Time {
 	// Try getting the expiration date for the command
-	expirationDate, err := GetLimitationExpiration(userID, command)
+	expirationDate, err := limitations.GetLimitationExpiration(userID, command)
 	if err != nil {
 		panic(err)
 	}
 
 	// Check if the user is blocked
 	if expirationDate != nil && time.Now().Before(*expirationDate) {
-		log.Debug().Str(keys.LogCommand, command).Time(keys.LogExpirationEnd, *expirationDate).Msg("user is limited")
+		log.Debug().Str(types.LogCommand, command).Time(types.LogExpirationEnd, *expirationDate).Msg("user is limited")
 		return expirationDate
 	}
 
@@ -130,9 +142,9 @@ func (bot *Bot) SetCommandLimitation(userID disgord.Snowflake, cmd string) {
 	// Set the expiration
 	commandLimitation := bot.cfg.FindLimitationByCommand(cmd)
 	if commandLimitation != nil {
-		err := SetLimitationExpiration(userID, cmd, time.Now().Add(commandLimitation.Duration))
+		err := limitations.SetLimitationExpiration(userID, cmd, time.Now().Add(commandLimitation.Duration))
 		if err != nil {
-			log.Error().Err(err).Str(keys.LogCommand, cmd).Msg("error while setting limitation expiration")
+			log.Error().Err(err).Str(types.LogCommand, cmd).Msg("error while setting limitation expiration")
 		}
 	}
 }

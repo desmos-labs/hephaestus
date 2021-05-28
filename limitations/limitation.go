@@ -1,4 +1,4 @@
-package bot
+package limitations
 
 import (
 	"io/ioutil"
@@ -10,11 +10,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/tendermint/tendermint/libs/json"
 
-	"github.com/desmos-labs/discord-bot/keys"
-)
-
-var (
-	LimitationsFile = path.Join(keys.DataDir, "limitations.json")
+	"github.com/desmos-labs/hephaestus/types"
 )
 
 // UserLimitations contains the data about the limitations of a single user
@@ -22,12 +18,14 @@ type UserLimitations struct {
 	CommandsLimitations map[string]time.Time `json:"commands_limitations"` // Map of limitations for each command
 }
 
+// NewUserLimitations returns a new UserLimitations object
 func NewUserLimitations() *UserLimitations {
 	return &UserLimitations{
 		CommandsLimitations: map[string]time.Time{},
 	}
 }
 
+// Equal tells whether u and v contain the same data
 func (u *UserLimitations) Equal(v *UserLimitations) bool {
 	if len(u.CommandsLimitations) != len(v.CommandsLimitations) {
 		return false
@@ -41,6 +39,17 @@ func (u *UserLimitations) Equal(v *UserLimitations) bool {
 	}
 
 	return true
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+var (
+	limitationsFile = path.Join(types.DataDir, "limitations.json")
+)
+
+// SetLimitationsFile sets the file path where the limitations will be written
+func SetLimitationsFile(file string) {
+	limitationsFile = file
 }
 
 // ReadLimitations reads the user limitations contained inside the given file
@@ -68,28 +77,28 @@ func ReadLimitations(file string) (map[string]*UserLimitations, error) {
 }
 
 func GetLimitationExpiration(userID disgord.Snowflake, command string) (*time.Time, error) {
-	limitations, err := ReadLimitations(LimitationsFile)
+	limitations, err := ReadLimitations(limitationsFile)
 	if err != nil {
 		return nil, err
 	}
 
 	userLimit, found := limitations[userID.String()]
 	if !found {
-		log.Debug().Str(keys.LogCommand, command).Str(keys.LogUser, userID.String()).Msg("has no limitations set")
+		log.Debug().Str(types.LogCommand, command).Str(types.LogUser, userID.String()).Msg("has no limitations set")
 		return nil, nil
 	}
 
 	// Get the limitation expiration for the specific command
 	timeLimit, ok := userLimit.CommandsLimitations[command]
 	if !ok {
-		log.Debug().Str(keys.LogCommand, command).Str(keys.LogUser, userID.String()).Msg("no limitations for the command found")
+		log.Debug().Str(types.LogCommand, command).Str(types.LogUser, userID.String()).Msg("no limitations for the command found")
 		return nil, nil
 	}
 	return &timeLimit, nil
 }
 
 func SetLimitationExpiration(userID disgord.Snowflake, command string, expiration time.Time) error {
-	usersLimitations, err := ReadLimitations(LimitationsFile)
+	usersLimitations, err := ReadLimitations(limitationsFile)
 	if err != nil {
 		return err
 	}
@@ -109,5 +118,5 @@ func SetLimitationExpiration(userID disgord.Snowflake, command string, expiratio
 	if err != nil {
 		return err
 	}
-	return ioutil.WriteFile(LimitationsFile, bz, os.ModePerm)
+	return ioutil.WriteFile(limitationsFile, bz, os.ModePerm)
 }

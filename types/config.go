@@ -1,4 +1,4 @@
-package config
+package types
 
 import (
 	"io/ioutil"
@@ -22,8 +22,9 @@ func Parse(filePath string) (*Config, error) {
 
 // Config contains all the configuration data
 type Config struct {
-	BotConfig   *BotConfig   `toml:"bot"`
-	ChainConfig *ChainConfig `toml:"chain"`
+	BotConfig    *BotConfig    `toml:"bot"`
+	ThemisConfig *ThemisConfig `toml:"themis"`
+	ChainConfig  *ChainConfig  `toml:"chain"`
 }
 
 type ChainConfig struct {
@@ -40,9 +41,17 @@ type AccountConfig struct {
 }
 
 type BotConfig struct {
-	Token       string              `toml:"token"`
-	Prefix      string              `toml:"prefix"`
-	Limitations []*LimitationConfig `toml:"limitations"`
+	Token  string `toml:"token"`
+	Prefix string `toml:"prefix"`
+
+	// Path to the PKCS#8-encoded private key of the bot
+	PrivateKeyPath string              `toml:"private_key_path"`
+	Limitations    []*LimitationConfig `toml:"limitations"`
+}
+
+// ThemisConfig contains the configuration of the Themis APIs endpoint
+type ThemisConfig struct {
+	Host string `toml:"host"`
 }
 
 func (cfg *BotConfig) FindLimitationByCommand(command string) *LimitationConfig {
