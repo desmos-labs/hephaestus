@@ -3,9 +3,10 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/desmos-labs/discord-bot/bot"
-	"github.com/desmos-labs/discord-bot/config"
-	"github.com/desmos-labs/discord-bot/cosmos"
+	"github.com/desmos-labs/hephaestus/types"
+
+	"github.com/desmos-labs/hephaestus/bot"
+	"github.com/desmos-labs/hephaestus/cosmos"
 )
 
 // StartCmd returns a Cobra command allowing to start the bot
@@ -16,7 +17,7 @@ func StartCmd() *cobra.Command {
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			// Read the configuration
-			cfg, err := config.Parse(args[0])
+			cfg, err := types.Parse(args[0])
 			if err != nil {
 				return err
 			}
@@ -28,7 +29,7 @@ func StartCmd() *cobra.Command {
 			}
 
 			// Create the bot
-			hephaestus, err := bot.Create(cfg.BotConfig, cosmosClient)
+			hephaestus, err := bot.Create(cfg.BotConfig, cfg.ThemisConfig, cosmosClient)
 			if err != nil {
 				return err
 			}

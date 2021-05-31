@@ -1,4 +1,4 @@
-package keys
+package types
 
 import (
 	"os"
@@ -12,10 +12,6 @@ var (
 
 const (
 	AppName = "hephaestus"
-
-	ReactionWarning = "⚠️"
-	ReactionDone    = "✅"
-	ReactionTime    = "⌛"
 
 	LogCommand       = "command"
 	LogUser          = "user"

@@ -10,7 +10,7 @@ import (
 	"github.com/desmos-labs/desmos/app"
 	rpchttp "github.com/tendermint/tendermint/rpc/client/http"
 
-	"github.com/desmos-labs/discord-bot/config"
+	types2 "github.com/desmos-labs/hephaestus/types"
 )
 
 // Client represents a Cosmos client that should be used to create and send transactions to the chain
@@ -23,8 +23,8 @@ type Client struct {
 }
 
 // NewClient allows to build a new Client instance
-func NewClient(chainCfg *config.ChainConfig) (*Client, error) {
-	// Get the private keys
+func NewClient(chainCfg *types2.ChainConfig) (*Client, error) {
+	// Get the private types
 	algo := hd.Secp256k1
 	derivedPriv, err := algo.Derive()(chainCfg.Account.Mnemonic, "", chainCfg.Account.HDPath)
 	if err != nil {

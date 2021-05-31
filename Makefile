@@ -65,5 +65,5 @@ lint-fix:
 format:
 	find . -name '*.go' -type f -not -path "*.git*" | xargs gofmt -w -s
 	find . -name '*.go' -type f -not -path "*.git*" | xargs misspell -w
-	find . -name '*.go' -type f -not -path "*.git*" | xargs goimports -w -local github.com/desmos-labs/discord-bot
+	find . -name '*.go' -type f -not -path "*.git*" | xargs goimports -w -local github.com/desmos-labs/hephaestus
 .PHONY: format

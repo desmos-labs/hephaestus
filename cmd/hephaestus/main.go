@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/desmos-labs/discord-bot/cmd"
+	"github.com/desmos-labs/hephaestus/cmd"
 )
 
 func main() {
