@@ -9,8 +9,10 @@ require (
 	github.com/desmos-labs/themis/apis v0.0.0-20210531132313-0b7c43eb5978
 	github.com/gin-gonic/gin v1.7.2 // indirect
 	github.com/go-playground/validator/v10 v10.7.0 // indirect
+	github.com/google/uuid v1.3.0 // indirect
+	github.com/hasura/go-graphql-client v0.2.0
 	github.com/json-iterator/go v1.1.11 // indirect
-	github.com/klauspost/compress v1.11.7 // indirect
+	github.com/klauspost/compress v1.13.1 // indirect
 	github.com/mattn/go-isatty v0.0.13 // indirect
 	github.com/pelletier/go-toml v1.8.1
 	github.com/rs/zerolog v1.21.0
@@ -20,9 +22,10 @@ require (
 	github.com/tendermint/tendermint v0.34.11
 	github.com/ugorji/go v1.2.6 // indirect
 	golang.org/x/crypto v0.0.0-20210711020723-a769d52b0f97
+	golang.org/x/net v0.0.0-20210614182718-04defd469f4e // indirect
 	golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c // indirect
-	golang.org/x/text v0.3.6 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
+	nhooyr.io/websocket v1.8.7 // indirect
 )
 
 replace github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1

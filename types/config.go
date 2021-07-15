@@ -22,9 +22,10 @@ func Parse(filePath string) (*Config, error) {
 
 // Config contains all the configuration data
 type Config struct {
-	BotConfig    *BotConfig    `toml:"bot"`
-	ThemisConfig *ThemisConfig `toml:"themis"`
-	ChainConfig  *ChainConfig  `toml:"chain"`
+	BotConfig          *BotConfig          `toml:"bot"`
+	ThemisConfig       *ThemisConfig       `toml:"themis"`
+	VerificationConfig *VerificationConfig `toml:"verification"`
+	ChainConfig        *ChainConfig        `toml:"chain"`
 }
 
 type ChainConfig struct {
@@ -47,6 +48,12 @@ type BotConfig struct {
 	// Path to the PKCS#8-encoded private key of the bot
 	PrivateKeyPath string              `toml:"private_key_path"`
 	Limitations    []*LimitationConfig `toml:"limitations"`
+}
+
+type VerificationConfig struct {
+	GraphQLEndpoint       string `toml:"graphql_endpoint"`
+	VerifiedUserRole      uint64 `toml:"verified_user_role_id"`
+	VerifiedValidatorRole uint64 `toml:"verified_validator_role_id"`
 }
 
 // ThemisConfig contains the configuration of the Themis APIs endpoint

@@ -19,16 +19,20 @@ import (
 
 // Bot represents the object that should be used to interact with Discord
 type Bot struct {
-	cfg       *types.BotConfig
-	themisCfg *types.ThemisConfig
-	privKey   *rsa.PrivateKey
+	cfg             *types.BotConfig
+	themisCfg       *types.ThemisConfig
+	verificationCfg *types.VerificationConfig
+	privKey         *rsa.PrivateKey
 
 	discord      *disgord.Client
 	cosmosClient *cosmos.Client
 }
 
 // Create allows to build a new Bot instance
-func Create(cfg *types.BotConfig, themisCfg *types.ThemisConfig, cosmosClient *cosmos.Client) (*Bot, error) {
+func Create(
+	cfg *types.BotConfig, themisCfg *types.ThemisConfig,
+	verificationCfg *types.VerificationConfig, cosmosClient *cosmos.Client,
+) (*Bot, error) {
 	privKey, err := utils.ReadPrivateKeyFromFile(cfg.PrivateKeyPath)
 	if err != nil {
 		panic(err)
@@ -64,9 +68,10 @@ func Create(cfg *types.BotConfig, themisCfg *types.ThemisConfig, cosmosClient *c
 	})
 
 	return &Bot{
-		cfg:       cfg,
-		themisCfg: themisCfg,
-		privKey:   privKey,
+		cfg:             cfg,
+		themisCfg:       themisCfg,
+		verificationCfg: verificationCfg,
+		privKey:         privKey,
 
 		discord:      discordClient,
 		cosmosClient: cosmosClient,
@@ -96,6 +101,7 @@ func (bot *Bot) Start() {
 		bot.NewCmdHandler(DocsCmd, bot.HandleDocs),
 		bot.NewCmdHandler(SendCmd, bot.HandleSendTokens),
 		bot.NewCmdHandler(ConnectCmd, bot.HandleConnect),
+		bot.NewCmdHandler(VerifyCmd, bot.HandleVerify),
 	)
 
 	log.Debug().Msg("listening for messages...")

@@ -29,7 +29,7 @@ func StartCmd() *cobra.Command {
 			}
 
 			// Create the bot
-			hephaestus, err := bot.Create(cfg.BotConfig, cfg.ThemisConfig, cosmosClient)
+			hephaestus, err := bot.Create(cfg.BotConfig, cfg.ThemisConfig, cfg.VerificationConfig, cosmosClient)
 			if err != nil {
 				return err
 			}

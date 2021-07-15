@@ -1,5 +1,7 @@
 package types
 
+import "fmt"
+
 // Error represents a generic Hephaestus error
 type Error struct {
 	Description string
@@ -21,8 +23,8 @@ func (e *Error) Error() string {
 
 // -------------------------------------------------------------------------------------------------------------------
 
-func NewWarnErr(description string) *Error {
-	return New(description, "⚠️")
+func NewWarnErr(description string, args ...interface{}) *Error {
+	return New(fmt.Sprintf(description, args...), "⚠️")
 }
 
 func NewTimeErr(description string) *Error {
