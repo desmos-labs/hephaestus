@@ -37,7 +37,30 @@ func (bot *Bot) HandleConnect(s disgord.Session, data *disgord.MessageCreate) er
 	msg := data.Message
 	content := strings.TrimSpace(strings.TrimPrefix(msg.Content, ConnectCmd))
 	if content == "" {
-		return types.NewWarnErr("Invalid argument value")
+		bot.Reply(msg, s, fmt.Sprintf(`**Connect**
+This command allows you to connect your Discord account to your Desmos profile.
+To do this, you have to: 
+
+1. Sign your Discord username using the Desmos CLI or any Desmos-compatible application.
+2. Use the %[1]s command to send the signature result. 
+
+__Signing your Discord username__
+1. Copy your Discord username by clicking on it in the bottom part of your Discord client. 
+   Your full username should be in the form of <username>#<identifier> (eg. Foo#123).
+
+2. Open your Desmos CLI or application, and sign your username. 
+   If you use the Desmos CLI, you can do this by using the following command:
+   `+"`desmos sign <Discord username> --from <your-key>`"+`
+   
+   Eg. `+"`desmos sign \"Foo#123\" --from foo`"+`
+
+__Sending the signed value__
+The sign command should return a JSON object. The last thing you have to do is now send it to me using the %[1]s command. To do this, simply send me a message as the following: 
+`+"`!%[1]s <JSON>`"+`
+
+Eg. `+"`!%[1]s connect {...}`"+`
+`, ConnectCmd))
+		return nil
 	}
 
 	var signatureData desmoscmd.SignatureData
@@ -60,12 +83,12 @@ func (bot *Bot) HandleConnect(s disgord.Session, data *disgord.MessageCreate) er
 
 	sigBz, err := hex.DecodeString(signatureData.Signature)
 	if err != nil {
-		return types.NewWarnErr("error while reading signature: %s", err)
+		return types.NewWarnErr("Error while reading signature: %s", err)
 	}
 
 	pubKey := secp256k1.PubKey(pubKeyBz)
 	if !pubKey.VerifySignature([]byte(signatureData.Value), sigBz) {
-		return types.NewWarnErr("invalid signature. Make sure you have signed your username (%s)", username)
+		return types.NewWarnErr("Invalid signature. Make sure you have signed your username (%s)", username)
 	}
 
 	// Upload the data to Themis
