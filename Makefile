@@ -32,6 +32,10 @@ $(BUILDDIR)/:
 ###                          Tools & Dependencies                           ###
 ###############################################################################
 
+tools:
+	@go get -u github.com/client9/misspell/cmd/misspell
+	@go get golang.org/x/tools/cmd/goimports
+
 go-mod-cache: go.sum
 	@echo "--> Download go modules to local cache"
 	@go mod download
