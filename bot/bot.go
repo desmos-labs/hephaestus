@@ -97,11 +97,11 @@ func (bot *Bot) Start() {
 			filter.StripPrefix, // Remove the command prefix from the message
 		)
 	handler.MessageCreate(
-		bot.NewCmdHandler(HelpCmd, bot.HandleHelp),
-		bot.NewCmdHandler(DocsCmd, bot.HandleDocs),
-		bot.NewCmdHandler(SendCmd, bot.HandleSendTokens),
-		bot.NewCmdHandler(ConnectCmd, bot.HandleConnect),
-		bot.NewCmdHandler(VerifyCmd, bot.HandleVerify),
+		bot.NewCmdHandler(types.CmdHelp, bot.HandleHelp),
+		bot.NewCmdHandler(types.CmdDocs, bot.HandleDocs),
+		bot.NewCmdHandler(types.CmdSend, bot.HandleSendTokens),
+		bot.NewCmdHandler(types.CmdConnect, bot.HandleConnect),
+		bot.NewCmdHandler(types.CmdVerify, bot.HandleVerify),
 	)
 
 	log.Debug().Msg("listening for messages...")

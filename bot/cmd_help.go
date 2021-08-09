@@ -3,11 +3,9 @@ package bot
 import (
 	"fmt"
 
-	"github.com/andersfylling/disgord"
-)
+	"github.com/desmos-labs/hephaestus/types"
 
-const (
-	HelpCmd = "help"
+	"github.com/andersfylling/disgord"
 )
 
 // HandleHelp handles the the request for help by the user
@@ -21,11 +19,11 @@ func (bot *Bot) HandleHelp(s disgord.Session, data *disgord.MessageCreate) error
 			"- `!%s <address>`, to ask for testnet tokens\n"+
 			"- `!%s`, to connect your Desmos profile to Discord\n"+
 			"- `!%s`, to verify the connection between Discord and your Desmos profile\n",
-		HelpCmd,
-		DocsCmd,
-		SendCmd,
-		ConnectCmd,
-		VerifyCmd,
+		types.CmdHelp,
+		types.CmdDocs,
+		types.CmdSend,
+		types.CmdConnect,
+		types.CmdVerify,
 	))
 
 	return nil

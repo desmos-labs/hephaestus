@@ -14,8 +14,6 @@ import (
 )
 
 const (
-	SendCmd = "send"
-
 	LogRecipient = "recipient"
 	LogTxHash    = "tx_hash"
 )
@@ -44,14 +42,14 @@ func (bot *Bot) HandleSendTokens(s disgord.Session, data *disgord.MessageCreate)
 	}
 
 	// Send the transaction
-	log.Debug().Str(types.LogCommand, SendCmd).Str(LogRecipient, addr.String()).Msg("sending tokens")
+	log.Debug().Str(types.LogCommand, types.CmdSend).Str(LogRecipient, addr.String()).Msg("sending tokens")
 	res, err := bot.cosmosClient.BroadcastTx(txMsg)
 	if err != nil {
 		return fmt.Errorf("error while sending transaction: %s", err)
 	}
 
 	log.Debug().Str(LogRecipient, addr.String()).Str(LogTxHash, res.TxHash).Msg("tokens sent successfully")
-	bot.SetCommandLimitation(msg.Author.ID, SendCmd)
+	bot.SetCommandLimitation(msg.Author.ID, types.CmdSend)
 	bot.Reply(msg, s, fmt.Sprintf(
 		"Your tokens have been sent successfully. You can see it by running `desmos q tx %s`."+
 			"If your balance does not update in the next seconds, make sure your node is synced.", res.TxHash,

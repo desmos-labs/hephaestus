@@ -13,6 +13,12 @@ var (
 const (
 	AppName = "hephaestus"
 
+	CmdHelp    = "help"
+	CmdConnect = "connect"
+	CmdDocs    = "docs"
+	CmdSend    = "send"
+	CmdVerify  = "verify"
+
 	LogCommand       = "command"
 	LogUser          = "user"
 	LogExpirationEnd = "expiration_end"

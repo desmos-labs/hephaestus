@@ -43,8 +43,9 @@ func CheckIsValidator(endpoint string, username string) (bool, error) {
 	}
 
 	if len(linkQuery.ApplicationLinks) == 0 {
-		return false, types.NewWarnErr("No link found for your account. " +
-			"Please make sure you create a Desmos profile and connect your Discord account first")
+		return false, types.NewWarnErr(`No link found for your account. 
+Please make sure you create a Desmos profile and connect your Discord account first.
+Use the `+"`!%s`"+`command to know more.`, types.CmdConnect)
 	}
 
 	applicationLink := linkQuery.ApplicationLinks[0]

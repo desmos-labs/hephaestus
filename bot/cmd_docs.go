@@ -6,10 +6,6 @@ import (
 	"github.com/andersfylling/disgord"
 )
 
-const (
-	DocsCmd = "docs"
-)
-
 // HandleDocs handles the the request for docs by the user
 func (bot *Bot) HandleDocs(s disgord.Session, data *disgord.MessageCreate) error {
 	// Answer to the command

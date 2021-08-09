@@ -8,10 +8,6 @@ import (
 	"github.com/desmos-labs/hephaestus/utils"
 )
 
-const (
-	VerifyCmd = "verify"
-)
-
 // HandleVerify handles a verification request. This request is done by the user who already has a Desmos profile
 // that is connected to their Discord profile. With this request they can verify everything has been completed
 // successfully and get the role they deserve inside the Discord channel.

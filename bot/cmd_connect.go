@@ -17,10 +17,6 @@ import (
 	"github.com/desmos-labs/hephaestus/types"
 )
 
-const (
-	ConnectCmd = "connect"
-)
-
 type CallData struct {
 	Username string `json:"username"`
 }
@@ -35,7 +31,7 @@ type CallData struct {
 func (bot *Bot) HandleConnect(s disgord.Session, data *disgord.MessageCreate) error {
 	// Get the arguments
 	msg := data.Message
-	content := strings.TrimSpace(strings.TrimPrefix(msg.Content, ConnectCmd))
+	content := strings.TrimSpace(strings.TrimPrefix(msg.Content, types.CmdConnect))
 	if content == "" {
 		bot.Reply(msg, s, fmt.Sprintf(`**Connect**
 This command allows you to connect your Discord account to your Desmos profile.
@@ -59,7 +55,7 @@ The sign command should return a JSON object. The last thing you have to do is n
 `+"`!%[1]s <JSON>`"+`
 
 Eg. `+"`!%[1]s connect {...}`"+`
-`, ConnectCmd))
+`, types.CmdConnect))
 		return nil
 	}
 
