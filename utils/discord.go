@@ -8,5 +8,5 @@ import (
 
 // GetUsername returns the username of the sender of the given message
 func GetUsername(msg *disgord.Message) string {
-	return fmt.Sprintf("%s#%d", msg.Author.Username, msg.Author.Discriminator)
+	return fmt.Sprintf("%s#%s", msg.Author.Username, msg.Author.Discriminator.String())
 }
