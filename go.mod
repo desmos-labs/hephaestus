@@ -4,8 +4,8 @@ go 1.15
 
 require (
 	github.com/andersfylling/disgord v0.26.1
-	github.com/cosmos/cosmos-sdk v0.42.5
-	github.com/desmos-labs/desmos v0.17.2
+	github.com/cosmos/cosmos-sdk v0.42.9
+	github.com/desmos-labs/desmos v0.17.7
 	github.com/desmos-labs/themis/apis v0.0.0-20210531132313-0b7c43eb5978
 	github.com/gin-gonic/gin v1.7.2 // indirect
 	github.com/go-playground/validator/v10 v10.7.0 // indirect
@@ -30,8 +30,6 @@ require (
 
 replace github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 
-replace github.com/cosmos/cosmos-sdk => github.com/desmos-labs/cosmos-sdk v0.42.5-0.20210712073217-87acd62da7d7
+replace github.com/cosmos/cosmos-sdk => github.com/desmos-labs/cosmos-sdk v0.42.5-0.20210804105457-640390b3cc37
 
 replace google.golang.org/grpc => google.golang.org/grpc v1.33.2
-
-replace github.com/keybase/go-keychain => github.com/99designs/go-keychain v0.0.0-20191008050251-8e49817e8af4

@@ -30,7 +30,10 @@ func (bot *Bot) NewCmdHandler(cmdName string, handler types.CmdHandler) disgord.
 
 		err := mergedHandlers(s, data)
 		if err != nil {
-			log.Warn().Err(err).Str(types.LogCommand, cmdName).Msg("error while handling command")
+			log.Warn().Err(err).
+				Str(types.LogUser, data.Message.Author.Username).
+				Str(types.LogCommand, cmdName).
+				Msg("error while handling command")
 
 			customErr, ok := err.(*types.Error)
 			if ok {
