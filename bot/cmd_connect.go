@@ -104,7 +104,7 @@ Eg. `+"`!%[1]s connect {...}`"+`
 		return err
 	}
 
-	callData := CallData{Username: signatureData.Value}
+	callData := CallData{Username: connectionData.Username}
 	callDataBz, err := json.Marshal(&callData)
 	if err != nil {
 		return types.NewWarnErr("Error while serializing call data: %s", err)
