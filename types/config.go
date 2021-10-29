@@ -26,19 +26,20 @@ type Config struct {
 	ThemisConfig       *ThemisConfig       `toml:"themis"`
 	VerificationConfig *VerificationConfig `toml:"verification"`
 	ChainConfig        *ChainConfig        `toml:"chain"`
+	AccountConfig      *AccountConfig      `toml:"account"`
 }
 
 type ChainConfig struct {
-	NodeURI      string         `toml:"node_uri"`
-	Bech32Prefix string         `toml:"bech32_prefix"`
-	ChainID      string         `toml:"id"`
-	Fees         string         `toml:"fees"`
-	Account      *AccountConfig `toml:"account"`
+	RPCAddr  string `toml:"rpc_addr"`
+	GRPCAddr string `toml:"grpc_addr"`
+	ChainID  string `toml:"id"`
+	GasPrice string `toml:"gas_price"`
 }
 
 type AccountConfig struct {
-	Mnemonic string `toml:"mnemonic"`
-	HDPath   string `toml:"hd_path"`
+	Bech32Prefix string `toml:"bech32_prefix"`
+	Mnemonic     string `toml:"mnemonic"`
+	HDPath       string `toml:"hd_path"`
 }
 
 type BotConfig struct {

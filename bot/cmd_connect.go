@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	desmoscmd "github.com/desmos-labs/desmos/app/desmos/cmd"
+	signcmd "github.com/desmos-labs/desmos/v2/app/desmos/cmd/sign"
 	"github.com/tendermint/tendermint/crypto/secp256k1"
 	"github.com/tendermint/tendermint/libs/json"
 
@@ -59,7 +59,7 @@ Eg. `+"`!%[1]s connect {...}`"+`
 		return nil
 	}
 
-	var signatureData desmoscmd.SignatureData
+	var signatureData signcmd.SignatureData
 	err := json.Unmarshal([]byte(content), &signatureData)
 	if err != nil {
 		return types.NewWarnErr("Invalid data provided: %s", err)

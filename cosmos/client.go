@@ -1,79 +1,96 @@
 package cosmos
 
 import (
+	"context"
+	"fmt"
+
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/cosmos/cosmos-sdk/crypto/hd"
-	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
+	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/x/auth/signing"
+	"github.com/cosmos/cosmos-sdk/x/auth/tx"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	"github.com/desmos-labs/desmos/app"
-	rpchttp "github.com/tendermint/tendermint/rpc/client/http"
+	rpcclient "github.com/tendermint/tendermint/rpc/client"
 
 	"github.com/desmos-labs/hephaestus/types"
 )
 
-// Client represents a Cosmos client that should be used to create and send transactions to the chain
+// Client represents a Cosmos client that should be used to interact with a chain
 type Client struct {
-	cliCtx client.Context
+	codec     codec.Codec
+	client    rpcclient.Client
+	txEncoder sdk.TxEncoder
 
-	privKey cryptotypes.PrivKey
-
-	fees string
+	authClient authtypes.QueryClient
+	chainID    string
+	gasPrice   sdk.DecCoin
 }
 
-// NewClient allows to build a new Client instance
-func NewClient(chainCfg *types.ChainConfig) (*Client, error) {
-	// Get the private types
-	algo := hd.Secp256k1
-	derivedPriv, err := algo.Derive()(chainCfg.Account.Mnemonic, "", chainCfg.Account.HDPath)
-	if err != nil {
-		return nil, err
-	}
-	privKey := algo.Generate()(derivedPriv)
-
-	// Build the RPC client
-	rpcClient, err := rpchttp.New(chainCfg.NodeURI, "/websocket")
+// NewClient returns a new Client instance
+func NewClient(config *types.ChainConfig, codec codec.Codec) (*Client, error) {
+	client, err := client.NewClientFromNode(config.RPCAddr)
 	if err != nil {
 		return nil, err
 	}
 
-	// Build the config
-	prefix := chainCfg.Bech32Prefix
-	sdkCfg := sdk.GetConfig()
-	sdkCfg.SetBech32PrefixForAccount(prefix, prefix+sdk.PrefixPublic)
-	sdkCfg.SetBech32PrefixForValidator(
-		prefix+sdk.PrefixValidator+sdk.PrefixOperator,
-		prefix+sdk.PrefixValidator+sdk.PrefixOperator+sdk.PrefixPublic,
-	)
-	sdkCfg.SetBech32PrefixForConsensusNode(
-		prefix+sdk.PrefixValidator+sdk.PrefixConsensus,
-		prefix+sdk.PrefixValidator+sdk.PrefixConsensus+sdk.PrefixPublic,
-	)
-	sdkCfg.Seal()
+	grpcConn, err := CreateGrpcConnection(config.GRPCAddr)
+	if err != nil {
+		return nil, fmt.Errorf("error while creating a GRPC connection: %s", err)
+	}
 
-	// Build the context
-	encodingConfig := app.MakeTestEncodingConfig()
-	cliCtx := client.Context{}.
-		WithNodeURI(chainCfg.NodeURI).
-		WithJSONMarshaler(encodingConfig.Marshaler).
-		WithInterfaceRegistry(encodingConfig.InterfaceRegistry).
-		WithTxConfig(encodingConfig.TxConfig).
-		WithLegacyAmino(encodingConfig.Amino).
-		WithAccountRetriever(authtypes.AccountRetriever{}).
-		WithBroadcastMode(flags.BroadcastSync).
-		WithClient(rpcClient).
-		WithChainID(chainCfg.ChainID).
-		WithFromAddress(sdk.AccAddress(privKey.PubKey().Address()))
+	gasPrice, err := sdk.ParseDecCoin(config.GasPrice)
+	if err != nil {
+		return nil, fmt.Errorf("error while parsing gas price: %s", err)
+	}
 
 	return &Client{
-		cliCtx:  cliCtx,
-		privKey: privKey,
-		fees:    chainCfg.Fees,
+		codec:      codec,
+		client:     client,
+		txEncoder:  tx.DefaultTxEncoder(),
+		authClient: authtypes.NewQueryClient(grpcConn),
+		chainID:    config.ChainID,
+		gasPrice:   gasPrice,
 	}, nil
 }
 
-// AccAddress returns the address of the account that is going to be used to sign the transactions
-func (client *Client) AccAddress() string {
-	return sdk.AccAddress(client.privKey.PubKey().Address()).String()
+// GetChainID returns the chain id associated to this client
+func (c *Client) GetChainID() string {
+	return c.chainID
+}
+
+// GetFees returns the fees that should be paid to perform a transaction with the given gas
+func (c *Client) GetFees(gas int64) sdk.Coins {
+	return sdk.NewCoins(sdk.NewCoin(c.gasPrice.Denom, c.gasPrice.Amount.MulInt64(gas).TruncateInt()))
+}
+
+// GetAccount returns the details of the account having the given address reading it from the chain
+func (c *Client) GetAccount(address string) (authtypes.AccountI, error) {
+	res, err := c.authClient.Account(context.Background(), &authtypes.QueryAccountRequest{Address: address})
+	if err != nil {
+		return nil, err
+	}
+
+	var account authtypes.AccountI
+	err = c.codec.UnpackAny(res.Account, &account)
+	if err != nil {
+		return nil, err
+	}
+
+	return account, nil
+}
+
+// BroadcastTx allows to broadcast a transaction containing the given messages
+func (c *Client) BroadcastTx(tx signing.Tx) (*sdk.TxResponse, error) {
+	bytes, err := c.txEncoder(tx)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := c.client.BroadcastTxCommit(context.Background(), bytes)
+	if err != nil {
+		return nil, err
+	}
+
+	// Broadcast the transaction to a Tendermint node
+	return sdk.NewResponseFormatBroadcastTxCommit(res), nil
 }

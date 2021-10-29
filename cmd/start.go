@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/desmos-labs/desmos/v2/app"
 	"github.com/spf13/cobra"
 
 	"github.com/desmos-labs/hephaestus/types"
@@ -22,14 +23,21 @@ func StartCmd() *cobra.Command {
 				return err
 			}
 
+			encodingConfig := app.MakeTestEncodingConfig()
+
 			// Crete cosmos client
-			cosmosClient, err := cosmos.NewClient(cfg.ChainConfig)
+			cosmosClient, err := cosmos.NewClient(cfg.ChainConfig, encodingConfig.Marshaler)
+			if err != nil {
+				return err
+			}
+
+			cosmosWallet, err := cosmos.NewWallet(cfg.AccountConfig, cosmosClient, encodingConfig.TxConfig)
 			if err != nil {
 				return err
 			}
 
 			// Create the bot
-			hephaestus, err := bot.Create(cfg.BotConfig, cfg.ThemisConfig, cfg.VerificationConfig, cosmosClient)
+			hephaestus, err := bot.Create(cfg.BotConfig, cfg.ThemisConfig, cfg.VerificationConfig, cosmosWallet)
 			if err != nil {
 				return err
 			}

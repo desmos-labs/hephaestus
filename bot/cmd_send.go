@@ -36,14 +36,14 @@ func (bot *Bot) HandleSendTokens(s disgord.Session, data *disgord.MessageCreate)
 
 	// Create the message
 	txMsg := &banktypes.MsgSend{
-		FromAddress: bot.cosmosClient.AccAddress(),
+		FromAddress: bot.wallet.AccAddress(),
 		ToAddress:   addr.String(),
 		Amount:      sdk.NewCoins(sdk.NewCoin("udaric", sdk.NewInt(2000000))),
 	}
 
 	// Send the transaction
 	log.Debug().Str(types.LogCommand, types.CmdSend).Str(LogRecipient, addr.String()).Msg("sending tokens")
-	res, err := bot.cosmosClient.BroadcastTx(txMsg)
+	res, err := bot.wallet.BroadCastTx(txMsg)
 	if err != nil {
 		return fmt.Errorf("error while sending transaction: %s", err)
 	}

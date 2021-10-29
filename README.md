@@ -5,11 +5,12 @@ Hephaestus is the official Discord bot for Desmos.
 ```toml
 [chain]
 id = "<Chain ID>"
-node_uri = "<Node URI>"
-bech32_prefix = "<Bech32 prefix>"
-fees =  "<Fees to be paid each transaction (optional)>"
+rpc_addr = "<Address of the RPC>"
+grpc_addr = "<Address of the gRPC>"
+gas_price =  "<Minimum gas price to be used>"
 
-[chain.account]
+[account]
+bech32_prefix = "<Bech32 prefix>"
 mnemonic = "<Mnemonic phrase>"
 hd_path = "<Account HD path>"
 

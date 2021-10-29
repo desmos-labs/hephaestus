@@ -24,14 +24,14 @@ type Bot struct {
 	verificationCfg *types.VerificationConfig
 	privKey         *rsa.PrivateKey
 
-	discord      *disgord.Client
-	cosmosClient *cosmos.Client
+	discord *disgord.Client
+	wallet  *cosmos.Wallet
 }
 
 // Create allows to build a new Bot instance
 func Create(
 	cfg *types.BotConfig, themisCfg *types.ThemisConfig,
-	verificationCfg *types.VerificationConfig, cosmosClient *cosmos.Client,
+	verificationCfg *types.VerificationConfig, cosmosClient *cosmos.Wallet,
 ) (*Bot, error) {
 	privKey, err := utils.ReadPrivateKeyFromFile(cfg.PrivateKeyPath)
 	if err != nil {
@@ -73,8 +73,8 @@ func Create(
 		verificationCfg: verificationCfg,
 		privKey:         privKey,
 
-		discord:      discordClient,
-		cosmosClient: cosmosClient,
+		discord: discordClient,
+		wallet:  cosmosClient,
 	}, nil
 }
 
