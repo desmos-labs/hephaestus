@@ -77,13 +77,18 @@ Eg. `+"`!%[1]s connect {...}`"+`
 		return types.NewWarnErr("Error while reading public key: %s", err)
 	}
 
+	valueBz, err := hex.DecodeString(signatureData.Value)
+	if err != nil {
+		return types.NewWarnErr("Error while reading value: %s", err)
+	}
+
 	sigBz, err := hex.DecodeString(signatureData.Signature)
 	if err != nil {
 		return types.NewWarnErr("Error while reading signature: %s", err)
 	}
 
 	pubKey := secp256k1.PubKey(pubKeyBz)
-	if !pubKey.VerifySignature([]byte(signatureData.Value), sigBz) {
+	if !pubKey.VerifySignature(valueBz, sigBz) {
 		return types.NewWarnErr("Invalid signature. Make sure you have signed your username (%s)", username)
 	}
 
