@@ -67,7 +67,7 @@ Eg. `+"`!%[1]s connect {...}`"+`
 
 	// Verify the username
 	username := utils.GetUsername(msg)
-	if signatureData.Value != username {
+	if signatureData.Value != hex.EncodeToString([]byte(username)) {
 		return types.NewWarnErr("Invalid signed value. Make sure you sign your username (%s)", username)
 	}
 
