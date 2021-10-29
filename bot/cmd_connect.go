@@ -93,7 +93,7 @@ Eg. `+"`!%[1]s connect {...}`"+`
 	}
 
 	// Upload the data to Themis
-	connectionData := types.NewConnectionData(signatureData.Address, signatureData.PubKey, signatureData.Value, signatureData.Signature)
+	connectionData := types.NewConnectionData(signatureData.Address, signatureData.PubKey, username, signatureData.Signature)
 	err = connectionData.Validate()
 	if err != nil {
 		return err
