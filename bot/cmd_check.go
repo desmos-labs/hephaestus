@@ -38,9 +38,9 @@ func (bot *Bot) HandleCheck(s disgord.Session, data *disgord.MessageCreate) erro
 
 	if balance != nil && !balance.IsZero() {
 		bot.Reply(msg, s, fmt.Sprintf("User with addresss %s already has %s", address, balance.String()))
-		return nil
+	} else {
+		bot.Reply(msg, s, fmt.Sprintf("User with address %s has no DSM yet", address))
 	}
 
-	bot.Reply(msg, s, fmt.Sprintf("User with address %s has no DSM yet", address))
 	return nil
 }
