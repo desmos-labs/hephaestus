@@ -1,10 +1,14 @@
 package bot
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/andersfylling/disgord"
 	"github.com/rs/zerolog/log"
 
-	"github.com/desmos-labs/hephaestus/gql"
+	"github.com/desmos-labs/hephaestus/types"
+
 	"github.com/desmos-labs/hephaestus/utils"
 )
 
@@ -13,19 +17,35 @@ import (
 // successfully and get the role they deserve inside the Discord channel.
 // This command has no arguments.
 func (bot *Bot) HandleVerify(s disgord.Session, data *disgord.MessageCreate) error {
-	username := utils.GetUsername(data.Message)
+	// Get the arguments
+	msg := data.Message
+	parts := strings.Split(msg.Content, " ")[1:]
+	if len(parts) == 0 {
+		bot.Reply(msg, s, fmt.Sprintf(`**Verify**
+This command allows you to verify your Discord account on this server.
+To do this, you have to: 
 
-	// Check to see if the user is a validator
-	isValidator, err := gql.CheckIsValidator(bot.verificationCfg.GraphQLEndpoint, username)
-	if err != nil {
-		return err
+1. Connect your Desmos Profile with your Discord account using the !%[4]s command.
+2. Use the %[1]s command to get your Discord role. 
+
+The !%[1]s command should be used as follow:
+`+"`!%[1]s <%[2]s/%[3]s>`"+`
+
+Eg. `+"`!%[1]s %[2]s`"+`
+`, types.CmdVerify, types.NetworkTestnet, types.NetworkMainnet, types.CmdConnect))
+		return nil
 	}
 
-	server := s.Guild(data.Message.GuildID)
+	// Get the network client to be used
+	var networkClient = bot.testnet
+	if parts[0] == types.NetworkMainnet {
+		networkClient = bot.mainnet
+	}
 
-	var role = disgord.Snowflake(bot.verificationCfg.VerifiedUserRole)
-	if isValidator {
-		role = disgord.Snowflake(bot.verificationCfg.VerifiedValidatorRole)
+	// Get the role to assign
+	role, err := networkClient.GetDiscordRole(utils.GetUsername(data.Message))
+	if err != nil {
+		return err
 	}
 
 	if role.IsZero() {
@@ -33,7 +53,7 @@ func (bot *Bot) HandleVerify(s disgord.Session, data *disgord.MessageCreate) err
 		return nil
 	}
 
-	err = server.Member(data.Message.Author.ID).AddRole(role)
+	err = s.Guild(data.Message.GuildID).Member(data.Message.Author.ID).AddRole(role)
 	if err != nil {
 		return err
 	}

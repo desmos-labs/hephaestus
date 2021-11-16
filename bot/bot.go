@@ -2,10 +2,9 @@ package bot
 
 import (
 	"context"
-	"crypto/rsa"
 	"time"
 
-	"github.com/desmos-labs/hephaestus/utils"
+	"github.com/desmos-labs/hephaestus/network"
 
 	"github.com/desmos-labs/hephaestus/limitations"
 
@@ -13,31 +12,20 @@ import (
 	"github.com/andersfylling/disgord/std"
 	"github.com/rs/zerolog/log"
 
-	"github.com/desmos-labs/hephaestus/cosmos"
 	"github.com/desmos-labs/hephaestus/types"
 )
 
 // Bot represents the object that should be used to interact with Discord
 type Bot struct {
-	cfg             *types.BotConfig
-	themisCfg       *types.ThemisConfig
-	verificationCfg *types.VerificationConfig
-	privKey         *rsa.PrivateKey
-
+	cfg     *types.BotConfig
 	discord *disgord.Client
-	wallet  *cosmos.Wallet
+
+	testnet *network.Client
+	mainnet *network.Client
 }
 
 // Create allows to build a new Bot instance
-func Create(
-	cfg *types.BotConfig, themisCfg *types.ThemisConfig,
-	verificationCfg *types.VerificationConfig, cosmosClient *cosmos.Wallet,
-) (*Bot, error) {
-	privKey, err := utils.ReadPrivateKeyFromFile(cfg.PrivateKeyPath)
-	if err != nil {
-		panic(err)
-	}
-
+func Create(cfg *types.BotConfig, testnet *network.Client, mainnet *network.Client) (*Bot, error) {
 	// Set the default prefix if empty
 	if cfg.Prefix == "" {
 		cfg.Prefix = "!"
@@ -68,13 +56,10 @@ func Create(
 	})
 
 	return &Bot{
-		cfg:             cfg,
-		themisCfg:       themisCfg,
-		verificationCfg: verificationCfg,
-		privKey:         privKey,
-
+		cfg:     cfg,
 		discord: discordClient,
-		wallet:  cosmosClient,
+		testnet: testnet,
+		mainnet: mainnet,
 	}, nil
 }
 
@@ -102,6 +87,7 @@ func (bot *Bot) Start() {
 		bot.NewCmdHandler(types.CmdSend, bot.HandleSendTokens),
 		bot.NewCmdHandler(types.CmdConnect, bot.HandleConnect),
 		bot.NewCmdHandler(types.CmdVerify, bot.HandleVerify),
+		bot.NewCmdHandler(types.CmdCheck, bot.HandleCheck),
 	)
 
 	log.Debug().Msg("listening for messages...")

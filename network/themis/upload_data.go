@@ -17,7 +17,7 @@ import (
 
 // UploadData uploads the given data using the Themis APIs hosted at the provided host,
 // after signing the data using the given private key
-func UploadData(data *types.ConnectionData, host string, privKey *rsa.PrivateKey) error {
+func (c *Client) UploadData(data *types.ConnectionData) error {
 	verData := themisdiscord.VerificationData{
 		Address:   data.Address,
 		PubKey:    data.PubKey,
@@ -30,7 +30,7 @@ func UploadData(data *types.ConnectionData, host string, privKey *rsa.PrivateKey
 		return err
 	}
 
-	signature, err := rsa.SignPSS(rand.Reader, privKey, crypto.SHA256, bz, nil)
+	signature, err := rsa.SignPSS(rand.Reader, c.privKey, crypto.SHA256, bz, nil)
 	if err != nil {
 		return err
 	}
@@ -43,7 +43,7 @@ func UploadData(data *types.ConnectionData, host string, privKey *rsa.PrivateKey
 		return err
 	}
 
-	req, err := http.NewRequest("POST", fmt.Sprintf("%s/discord/data", host), bytes.NewBuffer(bodyBz))
+	req, err := http.NewRequest("POST", fmt.Sprintf("%s/discord/data", c.host), bytes.NewBuffer(bodyBz))
 	if err != nil {
 		return err
 	}

@@ -3,7 +3,7 @@
 build/
 
 # Configuration
-*.toml
+*.yaml
 *.json
 
 # Coverage

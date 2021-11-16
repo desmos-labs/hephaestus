@@ -18,8 +18,13 @@ const (
 	CmdDocs    = "docs"
 	CmdSend    = "send"
 	CmdVerify  = "verify"
+	CmdCheck   = "check"
 
 	LogCommand       = "command"
 	LogUser          = "user"
 	LogExpirationEnd = "expiration_end"
+	LogRecipient     = "recipient"
+
+	NetworkTestnet = "testnet"
+	NetworkMainnet = "mainnet"
 )

@@ -4,7 +4,8 @@ import (
 	"io/ioutil"
 	"time"
 
-	"github.com/pelletier/go-toml"
+	wallettypes "github.com/desmos-labs/cosmos-go-wallet/types"
+	"gopkg.in/yaml.v3"
 )
 
 // Parse allows to parse the file at the provided path into a Config object
@@ -15,51 +16,56 @@ func Parse(filePath string) (*Config, error) {
 	}
 
 	var config Config
-	return &config, toml.Unmarshal(bz, &config)
+	return &config, yaml.Unmarshal(bz, &config)
 }
 
 // ------------------------------------------------------------------------------------------------------------------
 
 // Config contains all the configuration data
 type Config struct {
-	BotConfig          *BotConfig          `toml:"bot"`
-	ThemisConfig       *ThemisConfig       `toml:"themis"`
-	VerificationConfig *VerificationConfig `toml:"verification"`
-	ChainConfig        *ChainConfig        `toml:"chain"`
-	AccountConfig      *AccountConfig      `toml:"account"`
+	Networks  *NetworksConfig `yaml:"networks"`
+	BotConfig *BotConfig      `yaml:"bot"`
 }
 
+type NetworksConfig struct {
+	Testnet *NetworkConfig `yaml:"testnet"`
+	Mainnet *NetworkConfig `yaml:"mainnet"`
+}
+
+// NetworkConfig contains the configuration about the Desmos network to be used
+type NetworkConfig struct {
+	Chain   *ChainConfig               `yaml:"chain"`
+	Account *wallettypes.AccountConfig `yaml:"account"`
+	Themis  *ThemisConfig              `yaml:"themis"`
+	Discord *DiscordConfig             `yaml:"discord"`
+}
+
+// ChainConfig wraps the wallet ChainConfig structure adding the GraphQL endpoint
 type ChainConfig struct {
-	RPCAddr  string `toml:"rpc_addr"`
-	GRPCAddr string `toml:"grpc_addr"`
-	ChainID  string `toml:"id"`
-	GasPrice string `toml:"gas_price"`
-}
-
-type AccountConfig struct {
-	Bech32Prefix string `toml:"bech32_prefix"`
-	Mnemonic     string `toml:"mnemonic"`
-	HDPath       string `toml:"hd_path"`
-}
-
-type BotConfig struct {
-	Token  string `toml:"token"`
-	Prefix string `toml:"prefix"`
-
-	// Path to the PKCS#8-encoded private key of the bot
-	PrivateKeyPath string              `toml:"private_key_path"`
-	Limitations    []*LimitationConfig `toml:"limitations"`
-}
-
-type VerificationConfig struct {
-	GraphQLEndpoint       string `toml:"graphql_endpoint"`
-	VerifiedUserRole      uint64 `toml:"verified_user_role_id"`
-	VerifiedValidatorRole uint64 `toml:"verified_validator_role_id"`
+	*wallettypes.ChainConfig `yaml:"-,inline"`
+	GraphQL                  string `yaml:"graphql"`
 }
 
 // ThemisConfig contains the configuration of the Themis APIs endpoint
 type ThemisConfig struct {
-	Host string `toml:"host"`
+	// Themis host URL to where to upload data
+	Host string `yaml:"host"`
+
+	// Path to the PKCS#8-encoded private key of the bot
+	PrivateKeyPath string `yaml:"private_key_path"`
+}
+
+// DiscordConfig contains the configuration about the Discord server
+type DiscordConfig struct {
+	VerifiedUserRole      uint64 `yaml:"verified_user_role_id"`
+	VerifiedValidatorRole uint64 `yaml:"verified_validator_role_id"`
+}
+
+// BotConfig contains the configuration about the bot
+type BotConfig struct {
+	Token       string              `yaml:"token"`
+	Prefix      string              `yaml:"prefix"`
+	Limitations []*LimitationConfig `yaml:"limitations"`
 }
 
 func (cfg *BotConfig) FindLimitationByCommand(command string) *LimitationConfig {
@@ -72,6 +78,6 @@ func (cfg *BotConfig) FindLimitationByCommand(command string) *LimitationConfig 
 }
 
 type LimitationConfig struct {
-	Command  string        `toml:"command"`
-	Duration time.Duration `toml:"duration"`
+	Command  string        `yaml:"command"`
+	Duration time.Duration `yaml:"duration"`
 }

@@ -7,15 +7,12 @@ import (
 	"github.com/rs/zerolog/log"
 
 	"github.com/andersfylling/disgord"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 
 	"github.com/desmos-labs/hephaestus/types"
 )
 
 const (
-	LogRecipient = "recipient"
-	LogTxHash    = "tx_hash"
+	LogTxHash = "tx_hash"
 )
 
 // HandleSendTokens handles the sending of tokens to a user that asks them
@@ -27,28 +24,23 @@ func (bot *Bot) HandleSendTokens(s disgord.Session, data *disgord.MessageCreate)
 		return types.NewWarnErr("Missing recipient")
 	}
 
+	// Get the network client to be used
+	var networkClient = bot.testnet
+
 	// Parse the address to make sure it's valid
 	recipient := parts[1]
-	addr, err := sdk.AccAddressFromBech32(recipient)
+	_, err := networkClient.ParseAddress(recipient)
 	if err != nil {
 		return types.NewWarnErr(fmt.Sprintf("Invalid recipient address: %s", recipient))
 	}
 
 	// Create the message
-	txMsg := &banktypes.MsgSend{
-		FromAddress: bot.wallet.AccAddress(),
-		ToAddress:   addr.String(),
-		Amount:      sdk.NewCoins(sdk.NewCoin("udaric", sdk.NewInt(2000000))),
-	}
-
-	// Send the transaction
-	log.Debug().Str(types.LogCommand, types.CmdSend).Str(LogRecipient, addr.String()).Msg("sending tokens")
-	res, err := bot.wallet.BroadCastTx(txMsg)
+	res, err := networkClient.SendTokens(recipient, 2000000)
 	if err != nil {
 		return fmt.Errorf("error while sending transaction: %s", err)
 	}
 
-	log.Debug().Str(LogRecipient, addr.String()).Str(LogTxHash, res.TxHash).Msg("tokens sent successfully")
+	log.Debug().Str(types.LogRecipient, recipient).Str(LogTxHash, res.TxHash).Msg("tokens sent successfully")
 	bot.SetCommandLimitation(msg.Author.ID, types.CmdSend)
 	bot.Reply(msg, s, fmt.Sprintf(
 		"Your tokens have been sent successfully. You can see it by running `desmos q tx %s`."+

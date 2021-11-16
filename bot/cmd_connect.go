@@ -13,7 +13,6 @@ import (
 
 	"github.com/andersfylling/disgord"
 
-	"github.com/desmos-labs/hephaestus/themis"
 	"github.com/desmos-labs/hephaestus/types"
 )
 
@@ -31,8 +30,8 @@ type CallData struct {
 func (bot *Bot) HandleConnect(s disgord.Session, data *disgord.MessageCreate) error {
 	// Get the arguments
 	msg := data.Message
-	content := strings.TrimSpace(strings.TrimPrefix(msg.Content, types.CmdConnect))
-	if content == "" {
+	parts := strings.Split(msg.Content, " ")[1:]
+	if len(parts) == 0 {
 		bot.Reply(msg, s, fmt.Sprintf(`**Connect**
 This command allows you to connect your Discord account to your Desmos profile.
 To do this, you have to: 
@@ -52,58 +51,39 @@ __Signing your Discord username__
 
 __Sending the signed value__
 The sign command should return a JSON object. The last thing you have to do is now send it to me using the %[1]s command. To do this, simply send me a message as the following: 
-`+"`!%[1]s <JSON>`"+`
+`+"`!%[1]s <%[2]s/%[3]s> <JSON>`"+`
 
-Eg. `+"`!%[1]s connect {...}`"+`
-`, types.CmdConnect))
+Eg. `+"`!%[1]s %[2]s {...}`"+`
+`, types.CmdConnect, types.NetworkTestnet, types.NetworkMainnet))
 		return nil
 	}
 
-	var signatureData signcmd.SignatureData
-	err := json.Unmarshal([]byte(content), &signatureData)
-	if err != nil {
-		return types.NewWarnErr("Invalid data provided: %s", err)
+	// Get the network client to be used
+	var networkClient = bot.testnet
+	if parts[0] == types.NetworkMainnet {
+		networkClient = bot.mainnet
 	}
 
-	// Verify the username
+	// Get the signature data
 	username := utils.GetUsername(msg)
-	if signatureData.Value != hex.EncodeToString([]byte(username)) {
-		return types.NewWarnErr("Invalid signed value. Make sure you sign your username (%s)", username)
-	}
-
-	// Verify the signature
-	pubKeyBz, err := hex.DecodeString(signatureData.PubKey)
+	signatureData, err := bot.getSignatureData(parts[1], username)
 	if err != nil {
-		return types.NewWarnErr("Error while reading public key: %s", err)
+		return err
 	}
 
-	valueBz, err := hex.DecodeString(signatureData.Value)
-	if err != nil {
-		return types.NewWarnErr("Error while reading value: %s", err)
-	}
-
-	sigBz, err := hex.DecodeString(signatureData.Signature)
-	if err != nil {
-		return types.NewWarnErr("Error while reading signature: %s", err)
-	}
-
-	pubKey := secp256k1.PubKey(pubKeyBz)
-	if !pubKey.VerifySignature(valueBz, sigBz) {
-		return types.NewWarnErr("Invalid signature. Make sure you have signed your username (%s)", username)
+	// Create the connection data and validate it
+	connectionData := types.NewConnectionData(signatureData.Address, signatureData.PubKey, username, signatureData.Signature)
+	if err := connectionData.Validate(); err != nil {
+		return err
 	}
 
 	// Upload the data to Themis
-	connectionData := types.NewConnectionData(signatureData.Address, signatureData.PubKey, username, signatureData.Signature)
-	err = connectionData.Validate()
+	err = networkClient.UploadDataToThemis(connectionData)
 	if err != nil {
 		return err
 	}
 
-	err = themis.UploadData(connectionData, bot.themisCfg.Host, bot.privKey)
-	if err != nil {
-		return err
-	}
-
+	// Return to the user the call data for the Desmos command
 	callData := CallData{Username: connectionData.Username}
 	callDataBz, err := json.Marshal(&callData)
 	if err != nil {
@@ -120,4 +100,40 @@ Eg. `+"`!%[1]s connect {...}`"+`
 	))
 
 	return nil
+}
+
+func (bot *Bot) getSignatureData(jsonData string, username string) (*signcmd.SignatureData, error) {
+	var signatureData signcmd.SignatureData
+	err := json.Unmarshal([]byte(jsonData), &signatureData)
+	if err != nil {
+		return nil, types.NewWarnErr("Invalid data provided: %s", err)
+	}
+
+	// Verify the username
+	if signatureData.Value != hex.EncodeToString([]byte(username)) {
+		return nil, types.NewWarnErr("Invalid signed value. Make sure you sign your username (%s)", username)
+	}
+
+	// Verify the signature
+	pubKeyBz, err := hex.DecodeString(signatureData.PubKey)
+	if err != nil {
+		return nil, types.NewWarnErr("Error while reading public key: %s", err)
+	}
+
+	valueBz, err := hex.DecodeString(signatureData.Value)
+	if err != nil {
+		return nil, types.NewWarnErr("Error while reading value: %s", err)
+	}
+
+	sigBz, err := hex.DecodeString(signatureData.Signature)
+	if err != nil {
+		return nil, types.NewWarnErr("Error while reading signature: %s", err)
+	}
+
+	pubKey := secp256k1.PubKey(pubKeyBz)
+	if !pubKey.VerifySignature(valueBz, sigBz) {
+		return nil, types.NewWarnErr("Invalid signature. Make sure you have signed your username (%s)", username)
+	}
+
+	return &signatureData, nil
 }

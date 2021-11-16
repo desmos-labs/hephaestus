@@ -251,6 +251,10 @@ github.com/desertbit/timer v0.0.0-20180107155436-c41aec40b27f h1:U5y3Y5UE0w7amNe
 github.com/desertbit/timer v0.0.0-20180107155436-c41aec40b27f/go.mod h1:xH/i4TFMt8koVQZ6WFms69WAsDWr2XsYL3Hkl7jkoLE=
 github.com/desmos-labs/Go-Emoji-Utils v1.1.1-0.20210623064146-c30bc8196d0f h1:gUywWy8Pw1ROmF4o/qLy/FP1bEyEtjPg6a/RgdXmcCA=
 github.com/desmos-labs/Go-Emoji-Utils v1.1.1-0.20210623064146-c30bc8196d0f/go.mod h1:5TMhouV+kDGQZZrBK+rzBP+Jmeyu0V7WvrBHqukiTv8=
+github.com/desmos-labs/cosmos-go-wallet v0.0.0-20211116101816-fd2df562a4c3 h1:4N8i2McBuKDRljeQcAT67mLYHdJNetawUn6KEl9FgeU=
+github.com/desmos-labs/cosmos-go-wallet v0.0.0-20211116101816-fd2df562a4c3/go.mod h1:4FUpvBx4AzAutHcp7KqvYv3K9JevyMyYXomSVzpB1ao=
+github.com/desmos-labs/cosmos-go-wallet v0.0.0-20211116103831-7f89c57b117e h1:9cNHIzTVpZZO4t2fEVweeezudnv3Jpdeu/CM9tj/WIY=
+github.com/desmos-labs/cosmos-go-wallet v0.0.0-20211116103831-7f89c57b117e/go.mod h1:4FUpvBx4AzAutHcp7KqvYv3K9JevyMyYXomSVzpB1ao=
 github.com/desmos-labs/cosmos-sdk v0.43.0-alpha1.0.20211012153741-0450cc890f95 h1:OwvcwlMwvY+AD0/agVgvlTayPvSWqaDK318/h7+Yqdo=
 github.com/desmos-labs/cosmos-sdk v0.43.0-alpha1.0.20211012153741-0450cc890f95/go.mod h1:fwQJdw+aECatpTvQTo1tSfHEsxACdZYU80QCZUPnHr4=
 github.com/desmos-labs/desmos/v2 v2.2.0-testnet h1:L5fSKT0WqDLi2Ja6+m80uLg5qyiwxEDAQ5Op5xylJQA=
@@ -1159,6 +1163,7 @@ golang.org/x/crypto v0.0.0-20201117144127-c1f2f97bffc9/go.mod h1:jdWPYTVW3xRLrWP
 golang.org/x/crypto v0.0.0-20201221181555-eec23a3978ad/go.mod h1:jdWPYTVW3xRLrWPugEBEK3UY2ZEsg3UU495nc5E+M+I=
 golang.org/x/crypto v0.0.0-20210220033148-5ea612d1eb83/go.mod h1:jdWPYTVW3xRLrWPugEBEK3UY2ZEsg3UU495nc5E+M+I=
 golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a/go.mod h1:P+XmwS30IXTQdn5tA2iutPOUgjI07+tq3H3K9MVA1s8=
+golang.org/x/crypto v0.0.0-20210616213533-5ff15b29337e/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=
 golang.org/x/crypto v0.0.0-20210711020723-a769d52b0f97 h1:/UOmuWzQfxxo9UtlXMwuQU8CMgg1eZXqTRwkSQJWKOI=
 golang.org/x/crypto v0.0.0-20210711020723-a769d52b0f97/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=
 golang.org/x/exp v0.0.0-20190121172915-509febef88a4/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=

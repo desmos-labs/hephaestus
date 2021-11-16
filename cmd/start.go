@@ -4,10 +4,10 @@ import (
 	"github.com/desmos-labs/desmos/v2/app"
 	"github.com/spf13/cobra"
 
-	"github.com/desmos-labs/hephaestus/types"
+	"github.com/desmos-labs/hephaestus/network"
 
 	"github.com/desmos-labs/hephaestus/bot"
-	"github.com/desmos-labs/hephaestus/cosmos"
+	"github.com/desmos-labs/hephaestus/types"
 )
 
 // StartCmd returns a Cobra command allowing to start the bot
@@ -25,19 +25,23 @@ func StartCmd() *cobra.Command {
 
 			encodingConfig := app.MakeTestEncodingConfig()
 
-			// Crete cosmos client
-			cosmosClient, err := cosmos.NewClient(cfg.ChainConfig, encodingConfig.Marshaler)
-			if err != nil {
-				return err
+			// Build the networks clients
+			var mainnet, testnet *network.Client
+			if cfg.Networks.Testnet != nil {
+				testnet, err = network.NewClient(cfg.Networks.Testnet, encodingConfig)
+				if err != nil {
+					return err
+				}
 			}
-
-			cosmosWallet, err := cosmos.NewWallet(cfg.AccountConfig, cosmosClient, encodingConfig.TxConfig)
-			if err != nil {
-				return err
+			if cfg.Networks.Mainnet != nil {
+				mainnet, err = network.NewClient(cfg.Networks.Mainnet, encodingConfig)
+				if err != nil {
+					return err
+				}
 			}
 
 			// Create the bot
-			hephaestus, err := bot.Create(cfg.BotConfig, cfg.ThemisConfig, cfg.VerificationConfig, cosmosWallet)
+			hephaestus, err := bot.Create(cfg.BotConfig, testnet, mainnet)
 			if err != nil {
 				return err
 			}
