@@ -41,7 +41,7 @@ func NewClient(cfg *types.NetworkConfig, encodingConfig params.EncodingConfig) (
 		return nil, err
 	}
 
-	gqlClient, err := gql.NewClient(cfg.Chain.GRPCAddr)
+	gqlClient, err := gql.NewClient(cfg.Chain.GraphQL)
 	if err != nil {
 		return nil, err
 	}
@@ -52,6 +52,8 @@ func NewClient(cfg *types.NetworkConfig, encodingConfig params.EncodingConfig) (
 	}
 
 	return &Client{
+		discordCfg: cfg.Discord,
+
 		themis:  themisClient,
 		graphQL: gqlClient,
 		wallet:  wallet,
@@ -93,7 +95,7 @@ func (n *Client) UploadDataToThemis(username string, data *sign.SignatureData) e
 func (n *Client) GetDiscordRole(username string) (disgord.Snowflake, error) {
 	isValidator, err := n.graphQL.CheckIsValidator(username)
 	if err != nil {
-		return 0, err
+		return disgord.Snowflake(0), err
 	}
 
 	if isValidator {

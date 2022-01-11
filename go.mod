@@ -4,9 +4,9 @@ go 1.15
 
 require (
 	github.com/andersfylling/disgord v0.26.1
-	github.com/cosmos/cosmos-sdk v0.44.2
+	github.com/cosmos/cosmos-sdk v0.44.4
 	github.com/desmos-labs/cosmos-go-wallet v0.0.0-20211116103831-7f89c57b117e
-	github.com/desmos-labs/desmos/v2 v2.2.0-testnet
+	github.com/desmos-labs/desmos/v2 v2.3.1
 	github.com/desmos-labs/themis/apis v0.0.0-20220111092734-c6a1b17a2b0c
 	github.com/go-playground/validator/v10 v10.10.0 // indirect
 	github.com/google/uuid v1.3.0 // indirect
@@ -20,7 +20,7 @@ require (
 	golang.org/x/crypto v0.0.0-20211215153901-e495a2d5b3d3
 	golang.org/x/sys v0.0.0-20220110181412-a018aaa089fe // indirect
 	golang.org/x/text v0.3.7 // indirect
-	google.golang.org/grpc v1.41.0
+	google.golang.org/grpc v1.42.0
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 )
 
