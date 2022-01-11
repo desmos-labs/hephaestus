@@ -9,19 +9,19 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/desmos-labs/desmos/v2/app/desmos/cmd/sign"
+
 	themisdiscord "github.com/desmos-labs/themis/apis/discord"
 	"github.com/tendermint/tendermint/libs/json"
-
-	"github.com/desmos-labs/hephaestus/types"
 )
 
 // UploadData uploads the given data using the Themis APIs hosted at the provided host,
 // after signing the data using the given private key
-func (c *Client) UploadData(data *types.ConnectionData) error {
+func (c *Client) UploadData(username string, data *sign.SignatureData) error {
 	verData := themisdiscord.VerificationData{
 		Address:   data.Address,
 		PubKey:    data.PubKey,
-		Username:  data.Username,
+		Value:     data.Value,
 		Signature: data.Signature,
 	}
 
@@ -36,8 +36,9 @@ func (c *Client) UploadData(data *types.ConnectionData) error {
 	}
 
 	bodyBz, err := json.Marshal(&themisdiscord.SaveDataReq{
-		Signature:        hex.EncodeToString(signature),
+		Username:         username,
 		VerificationData: verData,
+		BotSignature:     hex.EncodeToString(signature),
 	})
 	if err != nil {
 		return err

@@ -6,6 +6,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/desmos-labs/cosmos-go-wallet/cosmos"
+	"github.com/desmos-labs/desmos/v2/app/desmos/cmd/sign"
 	"github.com/rs/zerolog/log"
 
 	"github.com/desmos-labs/hephaestus/network/chain"
@@ -83,8 +84,8 @@ func (n *Client) SendTokens(user string, amount int64) (*sdk.TxResponse, error) 
 }
 
 // UploadDataToThemis uploads the given data to Themis
-func (n *Client) UploadDataToThemis(data *types.ConnectionData) error {
-	return n.themis.UploadData(data)
+func (n *Client) UploadDataToThemis(username string, data *sign.SignatureData) error {
+	return n.themis.UploadData(username, data)
 }
 
 // GetDiscordRole returns the role that should be assigned to the Discord user having the given username,

@@ -17,7 +17,15 @@ import (
 )
 
 type CallData struct {
+	// Username is the plain-text Discord username of the user that wants to be verified
 	Username string `json:"username"`
+}
+
+// NewCallData returns a new CallData instance
+func NewCallData(username string) *CallData {
+	return &CallData{
+		Username: username,
+	}
 }
 
 // HandleConnect handle a connection request. This request is done by the users when they want to connect their Desmos
@@ -71,21 +79,14 @@ Eg. `+"`!%[1]s %[2]s {...}`"+`
 		return err
 	}
 
-	// Create the connection data and validate it
-	connectionData := types.NewConnectionData(signatureData.Address, signatureData.PubKey, username, signatureData.Signature)
-	if err := connectionData.Validate(); err != nil {
-		return err
-	}
-
 	// Upload the data to Themis
-	err = networkClient.UploadDataToThemis(connectionData)
+	err = networkClient.UploadDataToThemis(username, signatureData)
 	if err != nil {
 		return err
 	}
 
 	// Return to the user the call data for the Desmos command
-	callData := CallData{Username: connectionData.Username}
-	callDataBz, err := json.Marshal(&callData)
+	callDataBz, err := json.Marshal(NewCallData(username))
 	if err != nil {
 		return types.NewWarnErr("Error while serializing call data: %s", err)
 	}
@@ -95,7 +96,7 @@ Eg. `+"`!%[1]s %[2]s {...}`"+`
 		"```"+
 		"desmos tx profiles link-app ibc-profiles [channel] discord \"%[1]s\" %[2]s --from <key_name>"+
 		"```",
-		connectionData.Username,
+		username,
 		hex.EncodeToString(callDataBz),
 	))
 

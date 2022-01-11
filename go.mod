@@ -7,17 +7,19 @@ require (
 	github.com/cosmos/cosmos-sdk v0.44.2
 	github.com/desmos-labs/cosmos-go-wallet v0.0.0-20211116103831-7f89c57b117e
 	github.com/desmos-labs/desmos/v2 v2.2.0-testnet
-	github.com/desmos-labs/themis/apis v0.0.0-20210531132313-0b7c43eb5978
-	github.com/gin-gonic/gin v1.7.2 // indirect
-	github.com/go-playground/validator/v10 v10.7.0 // indirect
+	github.com/desmos-labs/themis/apis v0.0.0-20220111092734-c6a1b17a2b0c
+	github.com/go-playground/validator/v10 v10.10.0 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/hasura/go-graphql-client v0.2.0
+	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/rs/zerolog v1.23.0
 	github.com/spf13/cobra v1.2.1
 	github.com/stretchr/testify v1.7.0
 	github.com/tendermint/tendermint v0.34.14
 	github.com/ugorji/go v1.2.6 // indirect
-	golang.org/x/crypto v0.0.0-20210711020723-a769d52b0f97
+	golang.org/x/crypto v0.0.0-20211215153901-e495a2d5b3d3
+	golang.org/x/sys v0.0.0-20220110181412-a018aaa089fe // indirect
+	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/grpc v1.41.0
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 )
