@@ -110,11 +110,6 @@ func (bot *Bot) getSignatureData(jsonData string, username string) (*signcmd.Sig
 		return nil, types.NewWarnErr("Invalid data provided: %s", err)
 	}
 
-	// Verify the username
-	if signatureData.Value != hex.EncodeToString([]byte(username)) {
-		return nil, types.NewWarnErr("Invalid signed value. Make sure you sign your username (%s)", username)
-	}
-
 	// Verify the signature
 	pubKeyBz, err := hex.DecodeString(signatureData.PubKey)
 	if err != nil {
@@ -133,7 +128,7 @@ func (bot *Bot) getSignatureData(jsonData string, username string) (*signcmd.Sig
 
 	pubKey := secp256k1.PubKey(pubKeyBz)
 	if !pubKey.VerifySignature(valueBz, sigBz) {
-		return nil, types.NewWarnErr("Invalid signature. Make sure you have signed your username (%s)", username)
+		return nil, types.NewWarnErr("Invalid signature. Make sure you have signed the message using the correct account")
 	}
 
 	return &signatureData, nil
