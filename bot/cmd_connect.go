@@ -38,7 +38,7 @@ func NewCallData(username string) *CallData {
 func (bot *Bot) HandleConnect(s disgord.Session, data *disgord.MessageCreate) error {
 	// Get the arguments
 	msg := data.Message
-	parts := strings.Split(msg.Content, " ")[1:]
+	parts := strings.SplitN(msg.Content, " ", 3)[1:]
 	if len(parts) == 0 {
 		bot.Reply(msg, s, fmt.Sprintf(`**Connect**
 This command allows you to connect your Discord account to your Desmos profile.
