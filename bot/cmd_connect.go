@@ -4,6 +4,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"strings"
+	"time"
 
 	signcmd "github.com/desmos-labs/desmos/v2/app/desmos/cmd/sign"
 	"github.com/tendermint/tendermint/crypto/secp256k1"
@@ -74,7 +75,7 @@ Eg. `+"`!%[1]s %[2]s {...}`"+`
 
 	// Get the signature data
 	username := utils.GetUsername(msg)
-	signatureData, err := bot.getSignatureData(parts[1], username)
+	signatureData, err := bot.getSignatureData(parts[1])
 	if err != nil {
 		return err
 	}
@@ -94,16 +95,17 @@ Eg. `+"`!%[1]s %[2]s {...}`"+`
 	bot.Reply(msg, s, fmt.Sprintf("Your verification data has been stored successfully. "+
 		"All you have to do now is execute the following command:\n"+
 		"```"+
-		"desmos tx profiles link-app ibc-profiles [channel] discord \"%[1]s\" %[2]s --from <key_name>"+
+		"desmos tx profiles link-app ibc-profiles [channel] discord \"%[1]s\" %[2]s --timeout-height 0-0 --timeout-timestamp %[3]d --from <key_name>"+
 		"```",
 		username,
 		hex.EncodeToString(callDataBz),
+		time.Now().Add(time.Hour).UnixNano(),
 	))
 
 	return nil
 }
 
-func (bot *Bot) getSignatureData(jsonData string, username string) (*signcmd.SignatureData, error) {
+func (bot *Bot) getSignatureData(jsonData string) (*signcmd.SignatureData, error) {
 	var signatureData signcmd.SignatureData
 	err := json.Unmarshal([]byte(jsonData), &signatureData)
 	if err != nil {
