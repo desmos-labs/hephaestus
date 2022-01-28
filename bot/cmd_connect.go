@@ -95,7 +95,7 @@ Eg. `+"`!%[1]s %[2]s {...}`"+`
 	bot.Reply(msg, s, fmt.Sprintf("Your verification data has been stored successfully. "+
 		"All you have to do now is execute the following command:\n"+
 		"```"+
-		"desmos tx profiles link-app ibc-profiles [channel] discord \"%[1]s\" %[2]s --timeout-height 0-0 --timeout-timestamp %[3]d --from <key_name>"+
+		"desmos tx profiles link-app ibc-profiles [channel] discord \"%[1]s\" %[2]s --packet-timeout-height 0-0 --packet-timeout-timestamp %[3]d --from <key_name>"+
 		"```",
 		username,
 		hex.EncodeToString(callDataBz),
