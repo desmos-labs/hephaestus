@@ -4,14 +4,14 @@ import "github.com/hasura/go-graphql-client"
 
 // Client represents a GraphQL client
 type Client struct {
-	client *graphql.Client
+	chainClient  *graphql.Client
+	desmosClient *graphql.Client
 }
 
 // NewClient returns a new Client instance
-func NewClient(endpoint string) (*Client, error) {
-	client := graphql.NewClient(endpoint, nil)
-
+func NewClient(chainEndpoint string, desmosEndpoint string) (*Client, error) {
 	return &Client{
-		client: client,
+		chainClient:  graphql.NewClient(chainEndpoint, nil),
+		desmosClient: graphql.NewClient(desmosEndpoint, nil),
 	}, nil
 }

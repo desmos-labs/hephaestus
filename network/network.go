@@ -41,7 +41,7 @@ func NewClient(cfg *types.NetworkConfig, encodingConfig params.EncodingConfig) (
 		return nil, err
 	}
 
-	gqlClient, err := gql.NewClient(cfg.Chain.GraphQL)
+	gqlClient, err := gql.NewClient(cfg.Chain.ChainGraphQL, cfg.Chain.DesmosGraphQL)
 	if err != nil {
 		return nil, err
 	}

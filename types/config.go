@@ -43,7 +43,8 @@ type NetworkConfig struct {
 // ChainConfig wraps the wallet ChainConfig structure adding the GraphQL endpoint
 type ChainConfig struct {
 	*wallettypes.ChainConfig `yaml:"-,inline"`
-	GraphQL                  string `yaml:"graphql"`
+	ChainGraphQL             string `yaml:"chain_graphql_addr"`
+	DesmosGraphQL            string `yaml:"djuno_graphql_addr"`
 }
 
 // ThemisConfig contains the configuration of the Themis APIs endpoint

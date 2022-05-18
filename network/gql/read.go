@@ -19,7 +19,7 @@ func (c *Client) CheckIsValidator(username string) (bool, error) {
 		"username": graphql.String(fmt.Sprintf("%%%s%%", strings.ToLower(username))),
 	}
 
-	err := c.client.Query(context.Background(), &linkQuery, variables)
+	err := c.desmosClient.Query(context.Background(), &linkQuery, variables)
 	if err != nil {
 		return false, types.NewWarnErr("Error while querying the server: %s", err)
 	}
@@ -41,7 +41,7 @@ Use the `+"`!%s`"+`command to know more.`, types.CmdConnect)
 		"address": applicationLink.UserAddress,
 	}
 
-	err = c.client.Query(context.Background(), &qry, variables)
+	err = c.chainClient.Query(context.Background(), &qry, variables)
 	if err != nil {
 		return false, types.NewWarnErr("Error while querying the validator info: %s", err)
 	}
