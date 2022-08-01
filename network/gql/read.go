@@ -10,9 +10,9 @@ import (
 	"github.com/desmos-labs/hephaestus/types"
 )
 
-// CheckIsValidator checks whether the user having the given username is a validator or not
-// based on the data present on the specific GraphQL endpoint.
-func (c *Client) CheckIsValidator(username string) (bool, error) {
+// GetDiscordLink returns the ApplicationLink representing the connection between the Desmos Profile and Discord.
+// It returns an error if the link was not found, or it's not in the correct state.
+func (c *Client) GetDiscordLink(username string) (*ApplicationLink, error) {
 	// Build the query and the arguments
 	var linkQuery applicationLinkQuery
 	variables := map[string]interface{}{
@@ -21,27 +21,25 @@ func (c *Client) CheckIsValidator(username string) (bool, error) {
 
 	err := c.desmosClient.Query(context.Background(), &linkQuery, variables)
 	if err != nil {
-		return false, types.NewWarnErr("Error while querying the server: %s", err)
+		return nil, types.NewWarnErr("Error while querying the server: %s", err)
 	}
 
 	if len(linkQuery.ApplicationLinks) == 0 {
-		return false, types.NewWarnErr(`No link found for your account. 
-Please make sure you create a Desmos profile and connect your Discord account first.
-Use the `+"`!%s`"+`command to know more.`, types.CmdConnect)
+		return nil, nil
 	}
 
-	applicationLink := linkQuery.ApplicationLinks[0]
-	if applicationLink.State != "APPLICATION_LINK_STATE_VERIFICATION_SUCCESS" {
-		return false, types.NewWarnErr("Invalid link status: %s. Try reconnecting your Discord account.",
-			applicationLink.State)
-	}
+	return linkQuery.ApplicationLinks[0], nil
+}
 
+// CheckIsValidator checks whether the user having the given username is a validator or not
+// based on the data present on the specific GraphQL endpoint.
+func (c *Client) CheckIsValidator(appLink *ApplicationLink) (bool, error) {
 	var qry validatorQuery
-	variables = map[string]interface{}{
-		"address": applicationLink.UserAddress,
+	variables := map[string]interface{}{
+		"address": appLink.UserAddress,
 	}
 
-	err = c.chainClient.Query(context.Background(), &qry, variables)
+	err := c.chainClient.Query(context.Background(), &qry, variables)
 	if err != nil {
 		return false, types.NewWarnErr("Error while querying the validator info: %s", err)
 	}

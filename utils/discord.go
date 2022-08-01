@@ -6,7 +6,12 @@ import (
 	"github.com/andersfylling/disgord"
 )
 
-// GetUsername returns the username of the sender of the given message
-func GetUsername(msg *disgord.Message) string {
-	return fmt.Sprintf("%s#%s", msg.Author.Username, msg.Author.Discriminator.String())
+// GetMsgAuthorUsername returns the username of the sender of the given message
+func GetMsgAuthorUsername(msg *disgord.Message) string {
+	return GetUserUsername(msg.Author)
+}
+
+// GetUserUsername returns the username of the given user
+func GetUserUsername(user *disgord.User) string {
+	return fmt.Sprintf("%s#%s", user.Username, user.Discriminator.String())
 }

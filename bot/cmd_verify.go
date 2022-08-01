@@ -43,7 +43,7 @@ Eg. `+"`!%[1]s %[2]s`"+`
 	}
 
 	// Get the role to assign
-	role, err := networkClient.GetDiscordRole(utils.GetUsername(data.Message))
+	role, err := networkClient.GetDiscordRole(utils.GetMsgAuthorUsername(data.Message))
 	if err != nil {
 		return err
 	}

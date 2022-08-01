@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	"github.com/jasonlvhit/gocron"
+
 	"github.com/desmos-labs/hephaestus/network"
 
 	"github.com/desmos-labs/hephaestus/limitations"
@@ -89,6 +91,12 @@ func (bot *Bot) Start() {
 		bot.NewCmdHandler(types.CmdVerify, bot.HandleVerify),
 		bot.NewCmdHandler(types.CmdCheck, bot.HandleCheck),
 	)
+
+	// Setup periodic tasks
+	log.Debug().Msg("setting up periodic tasks...")
+	scheduler := gocron.NewScheduler()
+	scheduler.Every(5).Minutes().Do(bot.CleanRoles)
+	scheduler.Start()
 
 	log.Debug().Msg("listening for messages...")
 }

@@ -74,7 +74,7 @@ Eg. `+"`!%[1]s %[2]s {...}`"+`
 	}
 
 	// Get the signature data
-	username := utils.GetUsername(msg)
+	username := utils.GetMsgAuthorUsername(msg)
 	signatureData, err := bot.getSignatureData(parts[1])
 	if err != nil {
 		return err
