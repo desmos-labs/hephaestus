@@ -6,7 +6,7 @@ import (
 
 	"github.com/desmos-labs/hephaestus/network"
 
-	"github.com/desmos-labs/hephaestus/bot"
+	bot "github.com/desmos-labs/hephaestus/bot/discord"
 	"github.com/desmos-labs/hephaestus/types"
 )
 
