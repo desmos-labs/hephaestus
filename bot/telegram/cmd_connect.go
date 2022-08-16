@@ -31,10 +31,10 @@ func NewCallData(username string) *CallData {
 // The handling of the command will fail in the following occasions:
 // 1. The signed value does not correspond to the username of the user sending the message
 // 2. Any of the values are badly encoded
-func (bot *Bot) HandleConnect(context telebot.Context) error {
-	parts := strings.SplitN(context.Message().Payload, " ", 2)
+func (bot *Bot) HandleConnect(ctx telebot.Context) error {
+	parts := strings.SplitN(ctx.Message().Payload, " ", 2)
 	if len(parts) != 2 {
-		context.Reply(fmt.Sprintf(`**Connect**
+		ctx.Reply(fmt.Sprintf(`**Connect**
 This command allows you to connect your Telegram account to your Desmos profile.
 To do this, you have to: 
 
@@ -66,7 +66,7 @@ Eg. `+"`/%[1]s %[2]s {...}`"+`
 	}
 
 	// Get the signature data
-	username := context.Sender().Username
+	username := ctx.Sender().Username
 	signatureData, err := utils.GetSignatureData(parts[1])
 	if err != nil {
 		return err
@@ -83,7 +83,7 @@ Eg. `+"`/%[1]s %[2]s {...}`"+`
 	if err != nil {
 		return types.NewWarnErr("Error while serializing call data: %s", err)
 	}
-	context.Reply(fmt.Sprintf("Your verification data has been stored successfully. "+
+	ctx.Reply(fmt.Sprintf("Your verification data has been stored successfully. "+
 		"All you have to do now is execute the following command:\n"+
 		"```"+
 		"desmos tx profiles link-app ibc-profiles [channel] Telegram \"%[1]s\" %[2]s --packet-timeout-height 0-0 --packet-timeout-timestamp %[3]d --from <key_name>"+

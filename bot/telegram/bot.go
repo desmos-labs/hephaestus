@@ -42,6 +42,7 @@ func (bot *Bot) Start() {
 	bot.telegram.Handle(bot.getPrefixedCmd(types.CmdDocs), bot.HandleDocs)
 	bot.telegram.Handle(bot.getPrefixedCmd(types.CmdHelp), bot.HandleHelp)
 	bot.telegram.Handle(bot.getPrefixedCmd(types.CmdConnect), bot.HandleConnect)
+	bot.telegram.Handle(bot.getPrefixedCmd(types.CmdSend), bot.HandleSendTokens)
 	log.Debug().Msg("listening for messages...")
 	bot.telegram.Start()
 }

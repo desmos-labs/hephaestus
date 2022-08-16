@@ -7,9 +7,9 @@ import (
 )
 
 // HandleDocs handles the the request for docs by the user
-func (bot *Bot) HandleDocs(m telebot.Context) error {
+func (bot *Bot) HandleDocs(ctx telebot.Context) error {
 	// Answer to the command
-	m.Reply(fmt.Sprintf(
+	ctx.Reply(fmt.Sprintf(
 		"Here are a series of useful links:\n"+
 			"- General documentation: %s\n"+
 			"- Become a validator: %s",

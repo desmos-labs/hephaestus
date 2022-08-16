@@ -8,9 +8,9 @@ import (
 )
 
 // HandleHelp handles the the request for help by the user
-func (bot *Bot) HandleHelp(m telebot.Context) error {
+func (bot *Bot) HandleHelp(ctx telebot.Context) error {
 	// Answer to the command
-	m.Reply(fmt.Sprintf(
+	ctx.Reply(fmt.Sprintf(
 		"Here are the available commands:\n"+
 			"- `/%s`, to get help\n"+
 			"- `/%s`, to read the documentation\n"+
