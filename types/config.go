@@ -64,6 +64,7 @@ type DiscordConfig struct {
 
 // BotConfig contains the configuration about the bot
 type BotConfig struct {
+	Name        string              `yaml:"name"`
 	Token       string              `yaml:"token"`
 	Prefix      string              `yaml:"prefix"`
 	Limitations []*LimitationConfig `yaml:"limitations"`

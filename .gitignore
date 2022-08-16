@@ -1,6 +1,7 @@
 # Build
 .idea/
 build/
+vendor
 
 # Configuration
 *.yaml
