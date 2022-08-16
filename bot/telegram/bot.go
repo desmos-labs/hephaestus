@@ -1,8 +1,10 @@
 package bot
 
 import (
+	"strconv"
 	"time"
 
+	"github.com/desmos-labs/hephaestus/limitations"
 	"github.com/desmos-labs/hephaestus/network"
 	"github.com/desmos-labs/hephaestus/types"
 	"github.com/rs/zerolog/log"
@@ -39,14 +41,27 @@ func Create(cfg *types.BotConfig, testnet *network.Client, mainnet *network.Clie
 // Start starts the bot so that it can listen to events properly
 func (bot *Bot) Start() {
 	log.Debug().Msg("starting bot")
-	bot.telegram.Handle(bot.getPrefixedCmd(types.CmdDocs), bot.HandleDocs)
-	bot.telegram.Handle(bot.getPrefixedCmd(types.CmdHelp), bot.HandleHelp)
-	bot.telegram.Handle(bot.getPrefixedCmd(types.CmdConnect), bot.HandleConnect)
-	bot.telegram.Handle(bot.getPrefixedCmd(types.CmdSend), bot.HandleSendTokens)
+	bot.Handle(types.CmdDocs, bot.HandleDocs)
+	bot.Handle(types.CmdHelp, bot.HandleHelp)
+	bot.Handle(types.CmdConnect, bot.HandleConnect)
+	bot.Handle(types.CmdSend, bot.HandleSendTokens)
 	log.Debug().Msg("listening for messages...")
 	bot.telegram.Start()
 }
 
-func (bot *Bot) getPrefixedCmd(cmd string) string {
-	return bot.cfg.Prefix + cmd
+// CheckCommandLimit returns the date on which the given user will be able to run the command again
+func (bot *Bot) CheckCommandLimit(userID int64, command string) *time.Time {
+	// Try getting the expiration date for the command
+	expirationDate, err := limitations.GetLimitationExpiration(strconv.FormatInt(userID, 10), command)
+	if err != nil {
+		panic(err)
+	}
+
+	// Check if the user is blocked
+	if expirationDate != nil && time.Now().Before(*expirationDate) {
+		log.Debug().Str(types.LogCommand, command).Time(types.LogExpirationEnd, *expirationDate).Msg("user is limited")
+		return expirationDate
+	}
+
+	return nil
 }

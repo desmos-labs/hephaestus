@@ -76,22 +76,22 @@ func ReadLimitations(file string) (map[string]*UserLimitations, error) {
 	return limitations, json.Unmarshal(bz, &limitations)
 }
 
-func GetLimitationExpiration(userID disgord.Snowflake, command string) (*time.Time, error) {
+func GetLimitationExpiration(userID string, command string) (*time.Time, error) {
 	limitations, err := ReadLimitations(limitationsFile)
 	if err != nil {
 		return nil, err
 	}
 
-	userLimit, found := limitations[userID.String()]
+	userLimit, found := limitations[userID]
 	if !found {
-		log.Debug().Str(types.LogCommand, command).Str(types.LogUser, userID.String()).Msg("has no limitations set")
+		log.Debug().Str(types.LogCommand, command).Str(types.LogUser, userID).Msg("has no limitations set")
 		return nil, nil
 	}
 
 	// Get the limitation expiration for the specific command
 	timeLimit, ok := userLimit.CommandsLimitations[command]
 	if !ok {
-		log.Debug().Str(types.LogCommand, command).Str(types.LogUser, userID.String()).Msg("no limitations for the command found")
+		log.Debug().Str(types.LogCommand, command).Str(types.LogUser, userID).Msg("no limitations for the command found")
 		return nil, nil
 	}
 	return &timeLimit, nil

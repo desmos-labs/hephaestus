@@ -134,7 +134,7 @@ func (bot *Bot) Unreact(msg *disgord.Message, s disgord.Session, emoji interface
 // CheckCommandLimit returns the date on which the given user will be able to run the command again
 func (bot *Bot) CheckCommandLimit(userID disgord.Snowflake, command string) *time.Time {
 	// Try getting the expiration date for the command
-	expirationDate, err := limitations.GetLimitationExpiration(userID, command)
+	expirationDate, err := limitations.GetLimitationExpiration(userID.String(), command)
 	if err != nil {
 		panic(err)
 	}

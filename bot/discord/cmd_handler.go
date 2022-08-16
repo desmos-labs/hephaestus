@@ -11,8 +11,24 @@ import (
 	"github.com/desmos-labs/hephaestus/types"
 )
 
+// CmdHandler represents a function that extends a disgord.HandlerMessageCreate to allow it to return an error
+type CmdHandler = func(s disgord.Session, h *disgord.MessageCreate) error
+
+// MergeHandlers merges all the given handlers into a single one
+func MergeHandlers(handlers ...CmdHandler) CmdHandler {
+	return func(s disgord.Session, data *disgord.MessageCreate) error {
+		for _, h := range handlers {
+			err := h(s, data)
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	}
+}
+
 // NewCmdHandler returns a new command handler for the command that has the given name
-func (bot *Bot) NewCmdHandler(cmdName string, handler types.CmdHandler) disgord.HandlerMessageCreate {
+func (bot *Bot) NewCmdHandler(cmdName string, handler CmdHandler) disgord.HandlerMessageCreate {
 	return func(s disgord.Session, data *disgord.MessageCreate) {
 		// Consider only those messages starting with "connect"
 		msg := data.Message
@@ -23,7 +39,7 @@ func (bot *Bot) NewCmdHandler(cmdName string, handler types.CmdHandler) disgord.
 		log.Debug().Str(types.LogCommand, cmdName).Msg("received command")
 
 		// Merge the handler with the limit check
-		mergedHandlers := types.MergeHandlers(bot.checkCmdLimit(cmdName), handler)
+		mergedHandlers := MergeHandlers(bot.checkCmdLimit(cmdName), handler)
 
 		// Handle the message
 		err := mergedHandlers(s, data)
@@ -63,7 +79,7 @@ func (bot *Bot) handleError(msg *disgord.Message, s disgord.Session, err error) 
 	}
 }
 
-func (bot *Bot) checkCmdLimit(cmdName string) types.CmdHandler {
+func (bot *Bot) checkCmdLimit(cmdName string) CmdHandler {
 	return func(s disgord.Session, data *disgord.MessageCreate) error {
 		// Check the command limitation
 		msg := data.Message
