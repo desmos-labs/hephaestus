@@ -45,6 +45,7 @@ func (bot *Bot) NewCmdHandler(cmdName string, handler telebot.HandlerFunc) teleb
 			bot.handleError(ctx, err)
 		}
 		//TODO: react with message with ✅ when it is supported
+		bot.SetCommandLimitation(ctx.Sender().ID, cmdName)
 		return nil
 	}
 }

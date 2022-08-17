@@ -89,6 +89,7 @@ func (bot *Bot) checkCmdLimit(cmdName string) CmdHandler {
 				expirationDate.Format(time.RFC822),
 			))
 		}
+		bot.SetCommandLimitation(msg.Author.ID, cmdName)
 		return nil
 	}
 }

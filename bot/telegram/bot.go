@@ -65,3 +65,15 @@ func (bot *Bot) CheckCommandLimit(userID int64, command string) *time.Time {
 
 	return nil
 }
+
+// SetCommandLimitation sets the limitation for the given user for the provided command
+func (bot *Bot) SetCommandLimitation(userID int64, cmd string) {
+	// Set the expiration
+	commandLimitation := bot.cfg.FindLimitationByCommand(cmd)
+	if commandLimitation != nil {
+		err := limitations.SetLimitationExpiration(strconv.FormatInt(userID, 10), cmd, time.Now().Add(commandLimitation.Duration))
+		if err != nil {
+			log.Error().Err(err).Str(types.LogCommand, cmd).Msg("error while setting limitation expiration")
+		}
+	}
+}

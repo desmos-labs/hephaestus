@@ -153,7 +153,7 @@ func (bot *Bot) SetCommandLimitation(userID disgord.Snowflake, cmd string) {
 	// Set the expiration
 	commandLimitation := bot.cfg.FindLimitationByCommand(cmd)
 	if commandLimitation != nil {
-		err := limitations.SetLimitationExpiration(userID, cmd, time.Now().Add(commandLimitation.Duration))
+		err := limitations.SetLimitationExpiration(userID.String(), cmd, time.Now().Add(commandLimitation.Duration))
 		if err != nil {
 			log.Error().Err(err).Str(types.LogCommand, cmd).Msg("error while setting limitation expiration")
 		}

@@ -6,7 +6,6 @@ import (
 	"path"
 	"time"
 
-	"github.com/andersfylling/disgord"
 	"github.com/rs/zerolog/log"
 	"github.com/tendermint/tendermint/libs/json"
 
@@ -97,21 +96,21 @@ func GetLimitationExpiration(userID string, command string) (*time.Time, error) 
 	return &timeLimit, nil
 }
 
-func SetLimitationExpiration(userID disgord.Snowflake, command string, expiration time.Time) error {
+func SetLimitationExpiration(userID string, command string, expiration time.Time) error {
 	usersLimitations, err := ReadLimitations(limitationsFile)
 	if err != nil {
 		return err
 	}
 
 	// Get the limitations for the user
-	userLimits, ok := usersLimitations[userID.String()]
+	userLimits, ok := usersLimitations[userID]
 	if !ok {
 		userLimits = NewUserLimitations()
 	}
 
 	// Update the limitation
 	userLimits.CommandsLimitations[command] = expiration
-	usersLimitations[userID.String()] = userLimits
+	usersLimitations[userID] = userLimits
 
 	// Serialize the data
 	bz, err := json.Marshal(&usersLimitations)
