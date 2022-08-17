@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/rs/zerolog/log"
-	"gopkg.in/telebot.v3"
+	telebot "gopkg.in/telebot.v3"
 
 	"github.com/desmos-labs/hephaestus/types"
 )

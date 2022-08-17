@@ -1,6 +1,6 @@
 package gql
 
-import "github.com/hasura/go-graphql-client"
+import graphql "github.com/hasura/go-graphql-client"
 
 // Client represents a GraphQL client
 type Client struct {
