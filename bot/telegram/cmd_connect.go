@@ -4,7 +4,6 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/desmos-labs/hephaestus/types"
@@ -32,7 +31,7 @@ func NewCallData(username string) *CallData {
 // 1. The signed value does not correspond to the username of the user sending the message
 // 2. Any of the values are badly encoded
 func (bot *Bot) HandleConnect(ctx telebot.Context) error {
-	parts := strings.SplitN(ctx.Message().Payload, " ", 2)
+	parts := ctx.Args()
 	if len(parts) != 2 {
 		ctx.Reply(fmt.Sprintf(`**Connect**
 This command allows you to connect your Telegram account to your Desmos profile.
@@ -74,9 +73,9 @@ Eg. `+"`/%[1]s %[2]s {...}`"+`
 
 	// Upload the data to Themis
 	err = networkClient.UploadDataToThemis(username, bot.cfg.Name, signatureData)
-	// if err != nil {
-	// 	return err
-	// }
+	if err != nil {
+		return err
+	}
 
 	// Return to the user the call data for the Desmos command
 	callDataBz, err := json.Marshal(NewCallData(username))
