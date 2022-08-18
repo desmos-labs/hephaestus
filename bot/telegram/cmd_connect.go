@@ -84,8 +84,8 @@ Eg. `+"`/%[1]s %[2]s {...}`"+`
 	}
 	ctx.Reply(fmt.Sprintf("Your verification data has been stored successfully. "+
 		"All you have to do now is execute the following command:\n"+
-		"```"+
-		"desmos tx profiles link-app ibc-profiles [channel] Telegram \"%[1]s\" %[2]s --packet-timeout-height 0-0 --packet-timeout-timestamp %[3]d --from <key_name>"+
+		"```\n"+
+		"desmos tx profiles link-app ibc-profiles [channel] telegram \"%[1]s\" %[2]s --packet-timeout-height 0-0 --packet-timeout-timestamp %[3]d --from <key_name>"+
 		"```",
 		username,
 		hex.EncodeToString(callDataBz),
