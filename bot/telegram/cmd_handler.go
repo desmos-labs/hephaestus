@@ -56,10 +56,10 @@ func (bot *Bot) handleError(ctx telebot.Context, err error) {
 	customErr, ok := err.(*types.Error)
 	if ok {
 		ctx.Reply(customErr.Description)
-		//TODO: using ctx.React(customErr.Reaction) when it is supported
+		//TODO: add ctx.React(customErr.Reaction) when it is supported
 	} else {
 		ctx.Reply(err.Error())
-		//TODO: using ctx.React("🚨") when it is supported
+		//TODO: add ctx.React("🚨") when it is supported
 	}
 }
 

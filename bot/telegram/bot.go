@@ -20,6 +20,7 @@ type Bot struct {
 	mainnet *network.Client
 }
 
+// Create allows to build a new Bot instance
 func Create(cfg *types.BotConfig, testnet *network.Client, mainnet *network.Client) (*Bot, error) {
 	// Set the default prefix if empty
 	if cfg.Prefix == "" {

@@ -33,11 +33,9 @@ func (bot *Bot) HandleSendTokens(ctx telebot.Context) error {
 	}
 
 	log.Debug().Str(types.LogRecipient, recipient).Str(LogTxHash, res.TxHash).Msg("tokens sent successfully")
-	//TODO: limitation implementation
 	ctx.Reply(fmt.Sprintf(
 		"Your tokens have been sent successfully. You can see it by running `desmos q tx %s`."+
 			"If your balance does not update in the next seconds, make sure your node is synced.", res.TxHash,
 	))
-
 	return nil
 }
