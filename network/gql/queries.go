@@ -17,7 +17,7 @@ type ApplicationLink struct {
 }
 
 func (a *ApplicationLink) IsValid() bool {
-	return a.State == graphql.String(profilestypes.AppLinkStateVerificationSuccess)
+	return a.State == graphql.String(profilestypes.AppLinkStateVerificationSuccess.String())
 }
 
 // validatorQuery represents the query to be used to get the validator information
