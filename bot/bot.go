@@ -67,7 +67,7 @@ func Create(cfg *types.BotConfig, testnet *network.Client, mainnet *network.Clie
 
 // Start starts the bot so that it can listen to events properly
 func (bot *Bot) Start() {
-	// nolint:errcheck
+	//nolint:errcheck
 	defer bot.discord.Gateway().StayConnectedUntilInterrupted()
 
 	log.Debug().Msg("starting bot")
@@ -95,7 +95,10 @@ func (bot *Bot) Start() {
 	// Setup periodic tasks
 	log.Debug().Msg("setting up periodic tasks...")
 	scheduler := gocron.NewScheduler()
+
+	//nolint:errcheck
 	scheduler.Every(5).Minutes().Do(bot.CleanRoles)
+
 	scheduler.Start()
 
 	log.Debug().Msg("listening for messages...")

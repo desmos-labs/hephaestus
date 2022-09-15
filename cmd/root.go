@@ -15,7 +15,7 @@ const (
 	flagLogLevel  = "log-level"
 	flagLogFormat = "log-format"
 
-	logFormatJson = "json"
+	logFormatJSON = "json"
 	logFormatText = "text"
 )
 
@@ -63,7 +63,7 @@ func setupLogging(cmd *cobra.Command) error {
 		return err
 	}
 	switch value {
-	case logFormatJson:
+	case logFormatJSON:
 		return nil
 
 	case logFormatText:
