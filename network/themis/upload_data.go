@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/desmos-labs/desmos/v2/app/desmos/cmd/sign"
+	"github.com/desmos-labs/desmos/v4/app/desmos/cmd/sign"
 
 	themisdiscord "github.com/desmos-labs/themis/apis/discord"
 	"github.com/tendermint/tendermint/libs/json"

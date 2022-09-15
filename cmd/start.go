@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/desmos-labs/desmos/v2/app"
+	"github.com/desmos-labs/desmos/v4/app"
 	"github.com/spf13/cobra"
 
 	"github.com/desmos-labs/hephaestus/network"

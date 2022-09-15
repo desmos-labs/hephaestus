@@ -6,7 +6,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/desmos-labs/cosmos-go-wallet/cosmos"
-	"github.com/desmos-labs/desmos/v2/app/desmos/cmd/sign"
+	"github.com/desmos-labs/desmos/v4/app/desmos/cmd/sign"
 	"github.com/rs/zerolog/log"
 
 	"github.com/desmos-labs/hephaestus/utils"

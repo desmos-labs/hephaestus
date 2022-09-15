@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	signcmd "github.com/desmos-labs/desmos/v2/app/desmos/cmd/sign"
+	signcmd "github.com/desmos-labs/desmos/v4/app/desmos/cmd/sign"
 	"github.com/tendermint/tendermint/crypto/secp256k1"
 	"github.com/tendermint/tendermint/libs/json"
 

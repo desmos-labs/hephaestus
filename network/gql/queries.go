@@ -1,7 +1,7 @@
 package gql
 
 import (
-	profilestypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
+	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
 	"github.com/hasura/go-graphql-client"
 )
 
