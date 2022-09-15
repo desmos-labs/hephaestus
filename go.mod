@@ -1,6 +1,6 @@
 module github.com/desmos-labs/hephaestus
 
-go 1.17
+go 1.18
 
 require (
 	github.com/andersfylling/disgord v0.26.1
