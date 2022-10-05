@@ -5,8 +5,8 @@ go 1.18
 require (
 	github.com/andersfylling/disgord v0.26.1
 	github.com/cosmos/cosmos-sdk v0.45.8
-	github.com/desmos-labs/cosmos-go-wallet v0.0.0-20211116103831-7f89c57b117e
-	github.com/desmos-labs/desmos/v4 v4.4.1
+	github.com/desmos-labs/cosmos-go-wallet v0.5.1
+	github.com/desmos-labs/desmos/v4 v4.5.0
 	github.com/desmos-labs/themis/apis v0.0.0-20220111092734-c6a1b17a2b0c
 	github.com/golangci/golangci-lint v1.49.0
 	github.com/hasura/go-graphql-client v0.2.0
@@ -39,7 +39,7 @@ require (
 	github.com/alexkohler/prealloc v1.0.0 // indirect
 	github.com/alingse/asasalint v0.0.11 // indirect
 	github.com/andersfylling/snowflake/v5 v5.0.1 // indirect
-	github.com/armon/go-metrics v0.4.0 // indirect
+	github.com/armon/go-metrics v0.4.1 // indirect
 	github.com/ashanbrown/forbidigo v1.3.0 // indirect
 	github.com/ashanbrown/makezero v1.1.1 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
@@ -62,7 +62,7 @@ require (
 	github.com/cosmos/go-bip39 v1.0.0 // indirect
 	github.com/cosmos/gorocksdb v1.2.0 // indirect
 	github.com/cosmos/iavl v0.19.1 // indirect
-	github.com/cosmos/ibc-go/v3 v3.2.0 // indirect
+	github.com/cosmos/ibc-go/v3 v3.3.0 // indirect
 	github.com/cosmos/ledger-cosmos-go v0.11.1 // indirect
 	github.com/cosmos/ledger-go v0.9.2 // indirect
 	github.com/creachadair/taskgroup v0.3.2 // indirect
