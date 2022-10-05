@@ -1,11 +1,15 @@
 package network
 
 import (
+	"fmt"
+
 	"github.com/andersfylling/disgord"
 	"github.com/cosmos/cosmos-sdk/simapp/params"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	"github.com/desmos-labs/cosmos-go-wallet/cosmos"
+	"github.com/desmos-labs/cosmos-go-wallet/client"
+	wallettypes "github.com/desmos-labs/cosmos-go-wallet/types"
+	"github.com/desmos-labs/cosmos-go-wallet/wallet"
 	"github.com/desmos-labs/desmos/v4/app/desmos/cmd/sign"
 	"github.com/rs/zerolog/log"
 
@@ -22,18 +26,18 @@ type Client struct {
 
 	themis  *themis.Client
 	graphQL *gql.Client
-	network *cosmos.Client
-	wallet  *cosmos.Wallet
+	network *client.Client
+	wallet  *wallet.Wallet
 	chain   *chain.Client
 }
 
 func NewClient(cfg *types.NetworkConfig, encodingConfig params.EncodingConfig) (*Client, error) {
-	cosmosClient, err := cosmos.NewClient(cfg.Chain.ChainConfig, encodingConfig.Marshaler)
+	cosmosClient, err := client.NewClient(cfg.Chain.ChainConfig, encodingConfig.Marshaler)
 	if err != nil {
 		return nil, err
 	}
 
-	wallet, err := cosmos.NewWallet(cfg.Account, cosmosClient, encodingConfig.TxConfig)
+	wallet, err := wallet.NewWallet(cfg.Account, cosmosClient, encodingConfig.TxConfig)
 	if err != nil {
 		return nil, err
 	}
@@ -76,15 +80,25 @@ func (n *Client) GetBalance(user string) (sdk.Coins, error) {
 
 // SendTokens sends the specified amount of tokens to the provided user
 func (n *Client) SendTokens(user string, amount int64) (*sdk.TxResponse, error) {
-	txMsg := &banktypes.MsgSend{
-		FromAddress: n.wallet.AccAddress(),
-		ToAddress:   user,
-		Amount:      sdk.NewCoins(sdk.NewCoin(n.network.GetFeeDenom(), sdk.NewInt(amount))),
+	sender, err := sdk.AccAddressFromBech32(n.wallet.AccAddress())
+	if err != nil {
+		return nil, fmt.Errorf("invalid sender address: %s", err)
 	}
+
+	receiver, err := sdk.AccAddressFromBech32(user)
+	if err != nil {
+		return nil, fmt.Errorf("invalid user address: %s", err)
+	}
+
+	data := wallettypes.NewTransactionData(banktypes.NewMsgSend(
+		sender,
+		receiver,
+		sdk.NewCoins(sdk.NewCoin(n.network.GetFeeDenom(), sdk.NewInt(amount))),
+	)).WithGasAuto().WithFeeAuto().WithMemo("Sent from Hephaestus")
 
 	// Send the transaction
 	log.Debug().Str(types.LogCommand, types.CmdSend).Str(types.LogRecipient, user).Msg("sending tokens")
-	return n.wallet.BroadCastTx(txMsg)
+	return n.wallet.BroadcastTxSync(data)
 }
 
 // UploadDataToThemis uploads the given data to Themis

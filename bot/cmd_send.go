@@ -34,7 +34,7 @@ func (bot *Bot) HandleSendTokens(s disgord.Session, data *disgord.MessageCreate)
 		return types.NewWarnErr(fmt.Sprintf("Invalid recipient address: %s", recipient))
 	}
 
-	// Create the message
+	// Send the tokens
 	res, err := networkClient.SendTokens(recipient, 2000000)
 	if err != nil {
 		return fmt.Errorf("error while sending transaction: %s", err)

@@ -27,4 +27,7 @@ const (
 
 	NetworkTestnet = "testnet"
 	NetworkMainnet = "mainnet"
+
+	ReactionOK      = "✅"
+	ReactionWarning = "🚨"
 )

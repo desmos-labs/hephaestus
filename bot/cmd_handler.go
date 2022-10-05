@@ -30,7 +30,7 @@ func (bot *Bot) NewCmdHandler(cmdName string, handler types.CmdHandler) disgord.
 		if err != nil {
 			bot.handleError(msg, s, err)
 		} else {
-			bot.React(msg, s, "✅")
+			bot.React(msg, s, types.ReactionOK)
 		}
 
 		// Get the channel details
@@ -59,7 +59,7 @@ func (bot *Bot) handleError(msg *disgord.Message, s disgord.Session, err error) 
 		bot.React(msg, s, customErr.Reaction)
 	} else {
 		bot.Reply(msg, s, err.Error())
-		bot.React(msg, s, "🚨")
+		bot.React(msg, s, types.ReactionWarning)
 	}
 }
 
