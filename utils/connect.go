@@ -4,7 +4,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 
-	signcmd "github.com/desmos-labs/desmos/v2/app/desmos/cmd/sign"
+	signcmd "github.com/desmos-labs/desmos/v4/app/desmos/cmd/sign"
 	"github.com/desmos-labs/hephaestus/types"
 	"github.com/tendermint/tendermint/crypto/secp256k1"
 )
