@@ -9,6 +9,7 @@ import (
 	"github.com/tendermint/tendermint/crypto/secp256k1"
 )
 
+// GetSignatureData returns the signature data from the given JSON string
 func GetSignatureData(jsonData string) (*signcmd.SignatureData, error) {
 	var signatureData signcmd.SignatureData
 	err := json.Unmarshal([]byte(jsonData), &signatureData)

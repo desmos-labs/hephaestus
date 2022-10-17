@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	graphql "github.com/hasura/go-graphql-client"
+	"github.com/hasura/go-graphql-client"
 
 	"github.com/desmos-labs/hephaestus/types"
 )
