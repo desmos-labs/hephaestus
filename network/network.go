@@ -106,35 +106,50 @@ func (n *Client) UploadDataToThemis(username string, data *sign.SignatureData) e
 	return n.themis.UploadData(username, data)
 }
 
+// getDiscordLinksRole returns the role that the user associated with the given Discord link should have.
+// If all links are invalid, the role with id 0 is returned instead.
+func (n *Client) getDiscordLinksRole(discordLinks gql.ApplicationLinks) (disgord.Snowflake, error) {
+	if discordLinks.AreAllInvalid() {
+		return disgord.Snowflake(0), nil
+	}
+
+	for _, discordLink := range discordLinks {
+		if !discordLink.IsValid() {
+			continue
+		}
+
+		isValidator, err := n.graphQL.CheckIsValidator(discordLink)
+		if err != nil {
+			return disgord.Snowflake(0), err
+		}
+
+		if isValidator {
+			return disgord.Snowflake(n.discordCfg.VerifiedValidatorRole), nil
+		}
+	}
+
+	return disgord.Snowflake(n.discordCfg.VerifiedUserRole), nil
+}
+
 // GetDiscordRole returns the role that should be assigned to the Discord user having the given username,
 // based on the fact that they have connected their Discord account to a validator or user Desmos Profile
 func (n *Client) GetDiscordRole(username string) (disgord.Snowflake, error) {
-	discordLink, err := n.graphQL.GetDiscordLink(username)
+	discordLinks, err := n.graphQL.GetDiscordLinks(username)
 	if err != nil {
 		return disgord.Snowflake(0), err
 	}
 
-	if discordLink == nil {
+	if discordLinks == nil {
 		return disgord.Snowflake(0), types.NewWarnErr(`No link found for your account. 
 Please make sure you create a Desmos profile and connect your Discord account first.
 Use the `+"`!%s`"+`command to know more.`, types.CmdConnect)
 	}
 
-	if !discordLink.IsValid() {
-		return disgord.Snowflake(0), types.NewWarnErr(
-			"Invalid link status: %s. Try reconnecting your Discord account.", discordLink.State)
+	if discordLinks.AreAllInvalid() {
+		return disgord.Snowflake(0), types.NewWarnErr("Invalid link(s) status. Try reconnecting your Discord account.")
 	}
 
-	isValidator, err := n.graphQL.CheckIsValidator(discordLink)
-	if err != nil {
-		return disgord.Snowflake(0), err
-	}
-
-	if isValidator {
-		return disgord.Snowflake(n.discordCfg.VerifiedValidatorRole), nil
-	}
-
-	return disgord.Snowflake(n.discordCfg.VerifiedUserRole), nil
+	return n.getDiscordLinksRole(discordLinks)
 }
 
 // CleanRoles cleans the roles of all the members that are not verified anymore
@@ -147,22 +162,33 @@ func (n *Client) CleanRoles(s disgord.Session) error {
 		}
 
 		for _, member := range members {
-			// Check if the user is verified
-			isVerified, role := n.isVerified(member)
-			if !isVerified {
-				continue
-			}
+			username := utils.GetUserUsername(member.User)
 
 			// Get the application link
-			discordLink, err := n.graphQL.GetDiscordLink(utils.GetUserUsername(member.User))
+			discordLinks, err := n.graphQL.GetDiscordLinks(username)
 			if err != nil {
 				return err
 			}
 
-			// If the link does not exist anymore, or it's invalid, remove it
-			if discordLink == nil || !discordLink.IsValid() {
-				log.Debug().Str("user", utils.GetUserUsername(member.User)).Msg("removing verified role")
+			log.Debug().Str("user", username).Msg("refreshing verified role")
+
+			// Remove the current role (if any)
+			role := n.getCurrentRole(member)
+			if !role.IsZero() {
 				err = s.Guild(serverID).Member(member.UserID).RemoveRole(role)
+				if err != nil {
+					return err
+				}
+			}
+
+			// Assign the new role (if any)
+			role, err = n.getDiscordLinksRole(discordLinks)
+			if err != nil {
+				log.Error().Err(err).Str("user", username).Msg("error while getting role to be assigned")
+				return nil
+			}
+			if !role.IsZero() {
+				err = s.Guild(serverID).Member(member.UserID).AddRole(role)
 				if err != nil {
 					return err
 				}
@@ -173,9 +199,8 @@ func (n *Client) CleanRoles(s disgord.Session) error {
 	return nil
 }
 
-// isVerified tells whether the given member is verified or not.
-// If it's verified, it returns the verification role that they have assigned as well.
-func (n *Client) isVerified(member *disgord.Member) (bool, disgord.Snowflake) {
+// getCurrentRole returns the verification role that the given user has currently assigned
+func (n *Client) getCurrentRole(member *disgord.Member) disgord.Snowflake {
 	verifiedRoles := []disgord.Snowflake{
 		disgord.Snowflake(n.discordCfg.VerifiedUserRole),
 		disgord.Snowflake(n.discordCfg.VerifiedValidatorRole),
@@ -184,10 +209,10 @@ func (n *Client) isVerified(member *disgord.Member) (bool, disgord.Snowflake) {
 	for _, assignedRole := range member.Roles {
 		for _, verifyingRole := range verifiedRoles {
 			if assignedRole == verifyingRole {
-				return true, verifyingRole
+				return verifyingRole
 			}
 		}
 	}
 
-	return false, disgord.Snowflake(0)
+	return disgord.Snowflake(0)
 }

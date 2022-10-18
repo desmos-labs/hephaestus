@@ -20,6 +20,21 @@ func (a *ApplicationLink) IsValid() bool {
 	return a.State == graphql.String(profilestypes.AppLinkStateVerificationSuccess.String())
 }
 
+type ApplicationLinks []*ApplicationLink
+
+func (a ApplicationLinks) IsAnyValid() bool {
+	for _, link := range a {
+		if link.IsValid() {
+			return true
+		}
+	}
+	return false
+}
+
+func (a ApplicationLinks) AreAllInvalid() bool {
+	return !a.IsAnyValid()
+}
+
 // validatorQuery represents the query to be used to get the validator information
 // based on a self delegate address.
 type validatorQuery struct {

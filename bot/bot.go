@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/jasonlvhit/gocron"
+	"github.com/go-co-op/gocron"
 
 	"github.com/desmos-labs/hephaestus/network"
 
@@ -89,17 +89,14 @@ func (bot *Bot) Start() {
 		bot.NewCmdHandler(types.CmdSend, bot.HandleSendTokens),
 		bot.NewCmdHandler(types.CmdConnect, bot.HandleConnect),
 		bot.NewCmdHandler(types.CmdVerify, bot.HandleVerify),
-		bot.NewCmdHandler(types.CmdCheck, bot.HandleCheck),
 	)
 
 	// Setup periodic tasks
 	log.Debug().Msg("setting up periodic tasks...")
-	scheduler := gocron.NewScheduler()
+	scheduler := gocron.NewScheduler(time.UTC)
 
-	//nolint:errcheck
-	scheduler.Every(5).Minutes().Do(bot.CleanRoles)
-
-	scheduler.Start()
+	scheduler.Every(5).Minutes().StartAt(time.Now().Add(time.Second * 30)).Do(bot.CleanRoles)
+	scheduler.StartAsync()
 
 	log.Debug().Msg("listening for messages...")
 }
