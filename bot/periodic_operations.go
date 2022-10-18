@@ -2,21 +2,23 @@ package bot
 
 import "github.com/rs/zerolog/log"
 
-// CleanRoles iterates over all the members and cleans their roles
-func (bot *Bot) CleanRoles() {
-	log.Debug().Msg("cleaning roles")
+// RefreshRoles iterates over all the members and cleans their roles
+func (bot *Bot) RefreshRoles() {
+	log.Info().Timestamp().Msg("refreshing roles")
 
 	if bot.testnet != nil {
-		err := bot.testnet.CleanRoles(bot.discord)
+		err := bot.testnet.RefreshRoles(bot.discord)
 		if err != nil {
 			log.Error().Err(err).Msg("error while cleaning testnet roles")
 		}
 	}
 
 	if bot.mainnet != nil {
-		err := bot.mainnet.CleanRoles(bot.discord)
+		err := bot.mainnet.RefreshRoles(bot.discord)
 		if err != nil {
 			log.Error().Err(err).Msg("error while cleaning mainnet roles")
 		}
 	}
+
+	log.Info().Timestamp().Msg("roles refreshed")
 }

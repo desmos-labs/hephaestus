@@ -70,7 +70,7 @@ func (bot *Bot) Start() {
 	//nolint:errcheck
 	defer bot.discord.Gateway().StayConnectedUntilInterrupted()
 
-	log.Debug().Msg("starting bot")
+	log.Info().Timestamp().Msg("starting bot")
 
 	// Create a middleware that only accepts messages with a "ping" prefix
 	// tip: use this to identify bot commands
@@ -92,13 +92,13 @@ func (bot *Bot) Start() {
 	)
 
 	// Setup periodic tasks
-	log.Debug().Msg("setting up periodic tasks...")
+	log.Info().Timestamp().Msg("setting up periodic tasks...")
 	scheduler := gocron.NewScheduler(time.UTC)
 
-	scheduler.Every(5).Minutes().StartAt(time.Now().Add(time.Second * 30)).Do(bot.CleanRoles)
+	scheduler.Every(5).Minutes().StartAt(time.Now().Add(time.Second * 30)).Do(bot.RefreshRoles)
 	scheduler.StartAsync()
 
-	log.Debug().Msg("listening for messages...")
+	log.Info().Timestamp().Msg("listening for messages...")
 }
 
 // Reply sends a Discord message as a reply to the given msg

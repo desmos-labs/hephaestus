@@ -152,8 +152,8 @@ Use the `+"`!%s`"+`command to know more.`, types.CmdConnect)
 	return n.getDiscordLinksRole(discordLinks)
 }
 
-// CleanRoles cleans the roles of all the members that are not verified anymore
-func (n *Client) CleanRoles(s disgord.Session) error {
+// RefreshRoles refreshes the roles of all the members based on their verification system
+func (n *Client) RefreshRoles(s disgord.Session) error {
 	for _, serverID := range s.GetConnectedGuilds() {
 		// Get all the members
 		members, err := s.Guild(serverID).GetMembers(&disgord.GetMembersParams{})
