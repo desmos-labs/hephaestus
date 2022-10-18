@@ -73,6 +73,10 @@ Eg. `+"`!%[1]s %[2]s {...}`"+`
 		networkClient = bot.mainnet
 	}
 
+	if networkClient == nil {
+		return types.NewWarnErr("Network not enabled for this operation")
+	}
+
 	// Get the signature data
 	username := utils.GetMsgAuthorUsername(msg)
 	signatureData, err := bot.getSignatureData(parts[1])

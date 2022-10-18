@@ -27,6 +27,10 @@ func (bot *Bot) HandleSendTokens(s disgord.Session, data *disgord.MessageCreate)
 	// Get the network client to be used
 	var networkClient = bot.testnet
 
+	if networkClient == nil {
+		return types.NewWarnErr("Network not enabled for this operation")
+	}
+
 	// Parse the address to make sure it's valid
 	recipient := parts[1]
 	_, err := networkClient.ParseAddress(recipient)

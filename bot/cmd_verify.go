@@ -42,6 +42,10 @@ Eg. `+"`!%[1]s %[2]s`"+`
 		networkClient = bot.mainnet
 	}
 
+	if networkClient == nil {
+		return types.NewWarnErr("Network not enabled for this operation")
+	}
+
 	// Get the role to assign
 	role, err := networkClient.GetDiscordRole(utils.GetMsgAuthorUsername(data.Message))
 	if err != nil {
