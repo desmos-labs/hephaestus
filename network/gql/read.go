@@ -10,9 +10,9 @@ import (
 	"github.com/desmos-labs/hephaestus/types"
 )
 
-// GetDiscordLink returns the ApplicationLink representing the connection between the Desmos Profile and Discord.
+// GetDiscordLinks returns the (possibly multiple) ApplicationLink representing the connection between the Desmos Profile and Discord.
 // It returns an error if the link was not found, or it's not in the correct state.
-func (c *Client) GetDiscordLink(username string) (*ApplicationLink, error) {
+func (c *Client) GetDiscordLinks(username string) (ApplicationLinks, error) {
 	// Build the query and the arguments
 	var linkQuery applicationLinkQuery
 	variables := map[string]interface{}{
@@ -24,11 +24,7 @@ func (c *Client) GetDiscordLink(username string) (*ApplicationLink, error) {
 		return nil, types.NewWarnErr("Error while querying the server: %s", err)
 	}
 
-	if len(linkQuery.ApplicationLinks) == 0 {
-		return nil, nil
-	}
-
-	return linkQuery.ApplicationLinks[0], nil
+	return linkQuery.ApplicationLinks, nil
 }
 
 // CheckIsValidator checks whether the user having the given username is a validator or not

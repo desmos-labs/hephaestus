@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/jasonlvhit/gocron"
+	"github.com/go-co-op/gocron"
 
 	"github.com/desmos-labs/hephaestus/network"
 
@@ -70,7 +70,7 @@ func (bot *Bot) Start() {
 	//nolint:errcheck
 	defer bot.discord.Gateway().StayConnectedUntilInterrupted()
 
-	log.Debug().Msg("starting bot")
+	log.Info().Timestamp().Msg("starting bot")
 
 	// Create a middleware that only accepts messages with a "ping" prefix
 	// tip: use this to identify bot commands
@@ -89,19 +89,16 @@ func (bot *Bot) Start() {
 		bot.NewCmdHandler(types.CmdSend, bot.HandleSendTokens),
 		bot.NewCmdHandler(types.CmdConnect, bot.HandleConnect),
 		bot.NewCmdHandler(types.CmdVerify, bot.HandleVerify),
-		bot.NewCmdHandler(types.CmdCheck, bot.HandleCheck),
 	)
 
 	// Setup periodic tasks
-	log.Debug().Msg("setting up periodic tasks...")
-	scheduler := gocron.NewScheduler()
+	log.Info().Timestamp().Msg("setting up periodic tasks...")
+	scheduler := gocron.NewScheduler(time.UTC)
 
-	//nolint:errcheck
-	scheduler.Every(5).Minutes().Do(bot.CleanRoles)
+	scheduler.Every(5).Minutes().StartAt(time.Now().Add(time.Second * 30)).Do(bot.RefreshRoles)
+	scheduler.StartAsync()
 
-	scheduler.Start()
-
-	log.Debug().Msg("listening for messages...")
+	log.Info().Timestamp().Msg("listening for messages...")
 }
 
 // Reply sends a Discord message as a reply to the given msg

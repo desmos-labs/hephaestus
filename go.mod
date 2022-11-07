@@ -8,9 +8,9 @@ require (
 	github.com/desmos-labs/cosmos-go-wallet v0.5.1
 	github.com/desmos-labs/desmos/v4 v4.5.0
 	github.com/desmos-labs/themis/apis v0.0.0-20220111092734-c6a1b17a2b0c
+	github.com/go-co-op/gocron v1.17.1
 	github.com/golangci/golangci-lint v1.49.0
 	github.com/hasura/go-graphql-client v0.2.0
-	github.com/jasonlvhit/gocron v0.0.1
 	github.com/rs/zerolog v1.27.0
 	github.com/spf13/cobra v1.5.0
 	github.com/stretchr/testify v1.8.0
@@ -213,6 +213,7 @@ require (
 	github.com/rakyll/statik v0.1.7 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20200313005456-10cdbea86bc0 // indirect
 	github.com/regen-network/cosmos-proto v0.3.1 // indirect
+	github.com/robfig/cron/v3 v3.0.1 // indirect
 	github.com/rs/cors v1.8.2 // indirect
 	github.com/ryancurrah/gomodguard v1.2.4 // indirect
 	github.com/ryanrolds/sqlclosecheck v0.3.0 // indirect
