@@ -24,10 +24,13 @@ func (bot *Bot) HandleVerify(s disgord.Session, data *disgord.MessageCreate) err
 		bot.Reply(msg, s, fmt.Sprintf(`**Verify**
 This command allows you to verify your Discord account on this server.
 To do this, you have to: 
+
 1. Connect your Desmos Profile with your Discord account using the !%[4]s command.
-2. Use the %[1]s command to get your Discord role. 
+2. Use the %[1]s command to get your Discord role.
+
 The !%[1]s command should be used as follow:
 `+"`!%[1]s <%[2]s/%[3]s>`"+`
+
 Eg. `+"`!%[1]s %[2]s`"+`
 `, types.CmdVerify, types.NetworkTestnet, types.NetworkMainnet, types.CmdConnect))
 		return nil
