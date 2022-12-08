@@ -24,6 +24,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Prepare tags 🏷️
+        id: prep
         run: |
           DOCKER_IMAGE=desmoslabs/hephaestus
           VERSION=edge
