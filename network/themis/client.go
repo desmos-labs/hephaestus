@@ -2,7 +2,7 @@ package themis
 
 import (
 	"crypto/rsa"
-	"io/ioutil"
+	"os"
 
 	"golang.org/x/crypto/ssh"
 
@@ -17,7 +17,7 @@ type Client struct {
 
 // NewClient returns a new Client instance
 func NewClient(cfg *types.ThemisConfig) (*Client, error) {
-	bz, err := ioutil.ReadFile(cfg.PrivateKeyPath)
+	bz, err := os.ReadFile(cfg.PrivateKeyPath)
 	if err != nil {
 		return nil, err
 	}

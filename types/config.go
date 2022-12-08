@@ -1,7 +1,7 @@
 package types
 
 import (
-	"io/ioutil"
+	"os"
 	"time"
 
 	wallettypes "github.com/desmos-labs/cosmos-go-wallet/types"
@@ -10,7 +10,7 @@ import (
 
 // Parse allows to parse the file at the provided path into a Config object
 func Parse(filePath string) (*Config, error) {
-	bz, err := ioutil.ReadFile(filePath)
+	bz, err := os.ReadFile(filePath)
 	if err != nil {
 		return nil, err
 	}

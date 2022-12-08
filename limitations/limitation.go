@@ -1,7 +1,6 @@
 package limitations
 
 import (
-	"io/ioutil"
 	"os"
 	"path"
 	"time"
@@ -61,7 +60,7 @@ func ReadLimitations(file string) (map[string]*UserLimitations, error) {
 		}
 	}
 
-	bz, err := ioutil.ReadFile(file)
+	bz, err := os.ReadFile(file)
 	if err != nil {
 		return nil, err
 	}
@@ -118,5 +117,5 @@ func SetLimitationExpiration(userID disgord.Snowflake, command string, expiratio
 	if err != nil {
 		return err
 	}
-	return ioutil.WriteFile(limitationsFile, bz, os.ModePerm)
+	return os.WriteFile(limitationsFile, bz, os.ModePerm)
 }
