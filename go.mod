@@ -6,13 +6,13 @@ require (
 	github.com/andersfylling/disgord v0.26.1
 	github.com/cosmos/cosmos-sdk v0.45.11
 	github.com/desmos-labs/cosmos-go-wallet v0.5.1
-	github.com/desmos-labs/desmos/v4 v4.6.3
+	github.com/desmos-labs/desmos/v4 v4.7.0
 	github.com/desmos-labs/themis/apis v0.0.0-20220111092734-c6a1b17a2b0c
 	github.com/go-co-op/gocron v1.17.1
 	github.com/golangci/golangci-lint v1.50.1
 	github.com/hasura/go-graphql-client v0.2.0
 	github.com/rs/zerolog v1.27.0
-	github.com/spf13/cobra v1.6.0
+	github.com/spf13/cobra v1.6.1
 	github.com/stretchr/testify v1.8.1
 	github.com/tendermint/tendermint v0.34.23
 	golang.org/x/crypto v0.1.0
@@ -50,7 +50,7 @@ require (
 	github.com/bombsimon/wsl/v3 v3.3.0 // indirect
 	github.com/breml/bidichk v0.2.3 // indirect
 	github.com/breml/errchkjson v0.3.0 // indirect
-	github.com/btcsuite/btcd v0.22.2 // indirect
+	github.com/btcsuite/btcd v0.22.3 // indirect
 	github.com/btcsuite/btcd/btcec/v2 v2.2.0 // indirect
 	github.com/butuzov/ireturn v0.1.1 // indirect
 	github.com/cespare/xxhash v1.1.0 // indirect
@@ -65,7 +65,7 @@ require (
 	github.com/cosmos/gogoproto v1.4.2 // indirect
 	github.com/cosmos/gorocksdb v1.2.0 // indirect
 	github.com/cosmos/iavl v0.19.4 // indirect
-	github.com/cosmos/ibc-go/v3 v3.3.0 // indirect
+	github.com/cosmos/ibc-go/v3 v3.4.0 // indirect
 	github.com/cosmos/ledger-cosmos-go v0.11.1 // indirect
 	github.com/cosmos/ledger-go v0.9.2 // indirect
 	github.com/creachadair/taskgroup v0.3.2 // indirect
@@ -205,8 +205,8 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/polyfloyd/go-errorlint v1.0.5 // indirect
-	github.com/prometheus/client_golang v1.13.0 // indirect
-	github.com/prometheus/client_model v0.2.0 // indirect
+	github.com/prometheus/client_golang v1.14.0 // indirect
+	github.com/prometheus/client_model v0.3.0 // indirect
 	github.com/prometheus/common v0.37.0 // indirect
 	github.com/prometheus/procfs v0.8.0 // indirect
 	github.com/quasilyte/go-ruleguard v0.3.18 // indirect
@@ -286,8 +286,11 @@ require (
 )
 
 replace (
-	// Our wasmd branch is: https://github.com/desmos-labs/wasmd v0.29.x-desmos
-	github.com/CosmWasm/wasmd => github.com/desmos-labs/wasmd v0.29.0-desmos.1
+	// Our wasmd branch is: https://github.com/desmos-labs/wasmd v0.28.x-desmos
+	github.com/CosmWasm/wasmd => github.com/desmos-labs/wasmd v0.29.0-desmos.2
+
+	// Fixes Dragonberry
+	github.com/confio/ics23/go => github.com/cosmos/cosmos-sdk/ics23/go v0.8.0
 
 	// Our cosmos-sdk branch is: https://github.com/desmos-labs/cosmos-sdk v0.45.x-desmos
 	github.com/cosmos/cosmos-sdk => github.com/desmos-labs/cosmos-sdk v0.45.11-desmos
