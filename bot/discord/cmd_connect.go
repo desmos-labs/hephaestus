@@ -6,8 +6,6 @@ import (
 	"strings"
 	"time"
 
-	signcmd "github.com/desmos-labs/desmos/v4/app/desmos/cmd/sign"
-	"github.com/tendermint/tendermint/crypto/secp256k1"
 	"github.com/tendermint/tendermint/libs/json"
 
 	"github.com/desmos-labs/hephaestus/utils"
@@ -79,13 +77,13 @@ Eg. `+"`!%[1]s %[2]s {...}`"+`
 
 	// Get the signature data
 	username := utils.GetMsgAuthorUsername(msg)
-	signatureData, err := bot.getSignatureData(parts[1])
+	signatureData, err := utils.GetSignatureData(parts[1])
 	if err != nil {
 		return err
 	}
 
 	// Upload the data to Themis
-	err = networkClient.UploadDataToThemis(username, signatureData)
+	err = networkClient.UploadDataToThemis(username, bot.cfg.Name, signatureData)
 	if err != nil {
 		return err
 	}
@@ -107,35 +105,4 @@ Eg. `+"`!%[1]s %[2]s {...}`"+`
 	))
 
 	return nil
-}
-
-func (bot *Bot) getSignatureData(jsonData string) (*signcmd.SignatureData, error) {
-	var signatureData signcmd.SignatureData
-	err := json.Unmarshal([]byte(jsonData), &signatureData)
-	if err != nil {
-		return nil, types.NewWarnErr("Invalid data provided: %s", err)
-	}
-
-	// Verify the signature
-	pubKeyBz, err := hex.DecodeString(signatureData.PubKey)
-	if err != nil {
-		return nil, types.NewWarnErr("Error while reading public key: %s", err)
-	}
-
-	valueBz, err := hex.DecodeString(signatureData.Value)
-	if err != nil {
-		return nil, types.NewWarnErr("Error while reading value: %s", err)
-	}
-
-	sigBz, err := hex.DecodeString(signatureData.Signature)
-	if err != nil {
-		return nil, types.NewWarnErr("Error while reading signature: %s", err)
-	}
-
-	pubKey := secp256k1.PubKey(pubKeyBz)
-	if !pubKey.VerifySignature(valueBz, sigBz) {
-		return nil, types.NewWarnErr("Invalid signature. Make sure you have signed the message using the correct account")
-	}
-
-	return &signatureData, nil
 }

@@ -45,7 +45,6 @@ func (bot *Bot) HandleSendTokens(s disgord.Session, data *disgord.MessageCreate)
 	}
 
 	log.Debug().Str(types.LogRecipient, recipient).Str(LogTxHash, res.TxHash).Msg("tokens sent successfully")
-	bot.SetCommandLimitation(msg.Author.ID, types.CmdSend)
 	bot.Reply(msg, s, fmt.Sprintf(
 		"Your tokens have been sent successfully. You can see it by running `desmos q tx %s`."+
 			"If your balance does not update in the next seconds, make sure your node is synced.", res.TxHash,

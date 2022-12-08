@@ -102,8 +102,8 @@ func (n *Client) SendTokens(user string, amount int64) (*sdk.TxResponse, error) 
 }
 
 // UploadDataToThemis uploads the given data to Themis
-func (n *Client) UploadDataToThemis(username string, data *sign.SignatureData) error {
-	return n.themis.UploadData(username, data)
+func (n *Client) UploadDataToThemis(username string, provider string, data *sign.SignatureData) error {
+	return n.themis.UploadData(username, provider, data)
 }
 
 // getDiscordLinksRole returns the role that the user associated with the given Discord link should have.

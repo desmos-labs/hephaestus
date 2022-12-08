@@ -112,7 +112,7 @@ func (suite *LimitationsTestSuite) TestGetLimitationExpiration() {
 				suite.Require().NoError(err)
 			}
 
-			result, err := limitations.GetLimitationExpiration(uc.userID, uc.command)
+			result, err := limitations.GetLimitationExpiration(uc.userID.String(), uc.command)
 			if uc.expErr {
 				suite.Require().Error(err)
 				suite.Require().Nil(result)
@@ -238,7 +238,7 @@ func (suite *LimitationsTestSuite) TestRefreshLimitation() {
 				suite.Require().NoError(err)
 			}
 
-			err := limitations.SetLimitationExpiration(uc.userID, uc.command, uc.expiration)
+			err := limitations.SetLimitationExpiration(uc.userID.String(), uc.command, uc.expiration)
 			suite.Require().NoError(err)
 
 			if uc.expErr {

@@ -39,16 +39,17 @@ networks:
 # ---------------------------------------------------------------------------------------------------------------
 
 bot:
-  token: "<Discord bot token>"
-  prefix: "!"
+  name: "<Provider name (discord | telegram)>"
+  token: "<Bot API token>"
+  prefix: "<Command prefix (optional - default discord: '!' | telegram: '/' )>"
 
   limitations:
     - command: "help"
-      duration: "72h" # 3 days
+      duration: "0m" # no limit
 
     - command: "docs"
       duration: "15m" # 15 minutes
 
     - command: "send"
-      duration: "0m" # 7 Days
+      duration: "72h" # 7 Days
 ```

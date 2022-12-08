@@ -9,7 +9,8 @@ import (
 
 	"github.com/desmos-labs/hephaestus/network"
 
-	"github.com/desmos-labs/hephaestus/bot"
+	dscordbot "github.com/desmos-labs/hephaestus/bot/discord"
+	telegrambot "github.com/desmos-labs/hephaestus/bot/telegram"
 	"github.com/desmos-labs/hephaestus/types"
 )
 
@@ -49,14 +50,19 @@ func StartCmd() *cobra.Command {
 			}
 
 			// Create the bot
-			hephaestus, err := bot.Create(cfg.BotConfig, testnet, mainnet)
-			if err != nil {
-				return err
+			if cfg.BotConfig.Name == "discord" {
+				bot, err := dscordbot.Create(cfg.BotConfig, testnet, mainnet)
+				if err != nil {
+					return err
+				}
+				bot.Start()
+			} else if cfg.BotConfig.Name == "telegram" {
+				bot, err := telegrambot.Create(cfg.BotConfig, testnet, mainnet)
+				if err != nil {
+					return err
+				}
+				bot.Start()
 			}
-
-			// Start the bot
-			hephaestus.Start()
-
 			return nil
 		},
 	}

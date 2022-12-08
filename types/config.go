@@ -5,7 +5,7 @@ import (
 	"time"
 
 	wallettypes "github.com/desmos-labs/cosmos-go-wallet/types"
-	"gopkg.in/yaml.v3"
+	yaml "gopkg.in/yaml.v3"
 )
 
 // Parse allows to parse the file at the provided path into a Config object
@@ -64,6 +64,7 @@ type DiscordConfig struct {
 
 // BotConfig contains the configuration about the bot
 type BotConfig struct {
+	Name        string              `yaml:"name"`
 	Token       string              `yaml:"token"`
 	Prefix      string              `yaml:"prefix"`
 	Limitations []*LimitationConfig `yaml:"limitations"`
