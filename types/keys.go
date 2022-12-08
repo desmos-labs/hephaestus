@@ -11,6 +11,8 @@ var (
 )
 
 const (
+	EnvVariableConfigPath = "CONFIG_PATH"
+
 	AppName = "hephaestus"
 
 	CmdHelp    = "help"

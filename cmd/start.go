@@ -1,6 +1,9 @@
 package cmd
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/desmos-labs/desmos/v4/app"
 	"github.com/spf13/cobra"
 
@@ -13,12 +16,17 @@ import (
 // StartCmd returns a Cobra command allowing to start the bot
 func StartCmd() *cobra.Command {
 	return &cobra.Command{
-		Use:   "start [config-file]",
+		Use:   "start [[config-file]]",
 		Short: "Starts the bot using the provided configuration file",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.RangeArgs(0, 1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			// Read the configuration
-			cfg, err := types.Parse(args[0])
+			cfgPath, err := getConfigPath(args)
+			if err != nil {
+				return err
+			}
+
+			cfg, err := types.Parse(cfgPath)
 			if err != nil {
 				return err
 			}
@@ -52,4 +60,18 @@ func StartCmd() *cobra.Command {
 			return nil
 		},
 	}
+}
+
+// getConfigPath gets the configuration file path reading it from the
+// environmental variables, or from the arguments list provided
+func getConfigPath(args []string) (string, error) {
+	if value, ok := os.LookupEnv(types.EnvVariableConfigPath); ok {
+		return value, nil
+	}
+
+	if len(args) < 1 {
+		return "", fmt.Errorf("no config path found: use either the %s env variable, or the first argument", types.EnvVariableConfigPath)
+	}
+
+	return args[0], nil
 }
