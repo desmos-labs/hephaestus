@@ -1,3 +1,7 @@
+# Version 0.3.1
+## Dependencies
+- Bumped `github.com/desmos-labs/themis/apis` to `v0.1.0`
+
 # Version 0.3.0
 ## Features 
 - Allow setting the config path using the `CONFIG_PATH` env variable
