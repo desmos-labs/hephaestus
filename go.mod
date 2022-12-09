@@ -7,11 +7,11 @@ require (
 	github.com/cosmos/cosmos-sdk v0.45.11
 	github.com/desmos-labs/cosmos-go-wallet v0.5.1
 	github.com/desmos-labs/desmos/v4 v4.7.0
-	github.com/desmos-labs/themis/apis v0.0.0-20220111092734-c6a1b17a2b0c
+	github.com/desmos-labs/themis/apis v0.1.0
 	github.com/go-co-op/gocron v1.17.1
 	github.com/golangci/golangci-lint v1.50.1
 	github.com/hasura/go-graphql-client v0.2.0
-	github.com/rs/zerolog v1.27.0
+	github.com/rs/zerolog v1.28.0
 	github.com/spf13/cobra v1.6.1
 	github.com/stretchr/testify v1.8.1
 	github.com/tendermint/tendermint v0.34.23
@@ -92,7 +92,7 @@ require (
 	github.com/fzipp/gocyclo v0.6.0 // indirect
 	github.com/ghodss/yaml v1.0.0 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
-	github.com/gin-gonic/gin v1.7.7 // indirect
+	github.com/gin-gonic/gin v1.8.1 // indirect
 	github.com/go-critic/go-critic v0.6.5 // indirect
 	github.com/go-kit/kit v0.12.0 // indirect
 	github.com/go-kit/log v0.2.1 // indirect
@@ -109,6 +109,7 @@ require (
 	github.com/go-toolsmith/typep v1.0.2 // indirect
 	github.com/go-xmlfmt/xmlfmt v0.0.0-20191208150333-d5b6f63a941b // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
+	github.com/goccy/go-json v0.9.7 // indirect
 	github.com/godbus/dbus v0.0.0-20190726142602-4481cbc300e2 // indirect
 	github.com/gofrs/flock v0.8.1 // indirect
 	github.com/gogo/gateway v1.1.0 // indirect
@@ -252,7 +253,7 @@ require (
 	github.com/timonwong/loggercheck v0.9.3 // indirect
 	github.com/tomarrell/wrapcheck/v2 v2.7.0 // indirect
 	github.com/tommy-muehle/go-mnd/v2 v2.5.1 // indirect
-	github.com/ugorji/go/codec v1.2.4 // indirect
+	github.com/ugorji/go/codec v1.2.7 // indirect
 	github.com/ultraware/funlen v0.0.3 // indirect
 	github.com/ultraware/whitespace v0.0.5 // indirect
 	github.com/uudashr/gocognit v1.0.6 // indirect
@@ -269,7 +270,7 @@ require (
 	golang.org/x/mod v0.6.0 // indirect
 	golang.org/x/net v0.1.0 // indirect
 	golang.org/x/sync v0.0.0-20220929204114-8fcdb60fdcc0 // indirect
-	golang.org/x/sys v0.1.0 // indirect
+	golang.org/x/sys v0.3.0 // indirect
 	golang.org/x/term v0.1.0 // indirect
 	golang.org/x/text v0.4.0 // indirect
 	golang.org/x/tools v0.2.0 // indirect
@@ -286,7 +287,7 @@ require (
 )
 
 replace (
-	// Our wasmd branch is: https://github.com/desmos-labs/wasmd v0.28.x-desmos
+	// Our wasmd branch is: https://github.com/desmos-labs/wasmd v0.29.x-desmos
 	github.com/CosmWasm/wasmd => github.com/desmos-labs/wasmd v0.29.0-desmos.2
 
 	// Fixes Dragonberry
