@@ -67,6 +67,7 @@ type BotConfig struct {
 	Token       string              `yaml:"token"`
 	Prefix      string              `yaml:"prefix"`
 	Limitations []*LimitationConfig `yaml:"limitations"`
+	BannedWords []string            `yaml:"banned_words"`
 }
 
 func (cfg *BotConfig) FindLimitationByCommand(command string) *LimitationConfig {

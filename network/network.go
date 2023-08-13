@@ -156,7 +156,7 @@ Use the `+"`!%s`"+`command to know more.`, types.CmdConnect)
 func (n *Client) RefreshRoles(s disgord.Session) error {
 	for _, serverID := range s.GetConnectedGuilds() {
 		// Get all the members
-		members, err := s.Guild(serverID).GetMembers(&disgord.GetMembersParams{})
+		members, err := s.Guild(serverID).GetMembers(&disgord.GetMembers{})
 		if err != nil {
 			return types.NewWarnErr("error while getting members: %s", err)
 		}

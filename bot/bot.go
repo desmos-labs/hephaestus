@@ -72,18 +72,24 @@ func (bot *Bot) Start() {
 
 	log.Info().Timestamp().Msg("starting bot")
 
-	// Create a middleware that only accepts messages with a "ping" prefix
-	// tip: use this to identify bot commands
+	// Create a handler that handles all command for generic utilities such as auto ban
+	msgHandler := bot.discord.Gateway()
+	msgHandler.MessageCreate(
+		bot.AutoBanMessage,
+	)
+
+	// Create a middleware that only accepts messages with a given prefix
 	filter, _ := std.NewMsgFilter(context.Background(), bot.discord)
 	filter.SetPrefix(bot.cfg.Prefix)
 
-	handler := bot.discord.Gateway().
+	// Create a handler that handles specific bot commands
+	cmdHandler := bot.discord.Gateway().
 		WithMiddleware(
 			filter.NotByBot,    // Ignore hephaestus messages
 			filter.HasPrefix,   // Message must have the given prefix
 			filter.StripPrefix, // Remove the command prefix from the message
 		)
-	handler.MessageCreate(
+	cmdHandler.MessageCreate(
 		bot.NewCmdHandler(types.CmdHelp, bot.HandleHelp),
 		bot.NewCmdHandler(types.CmdDocs, bot.HandleDocs),
 		bot.NewCmdHandler(types.CmdSend, bot.HandleSendTokens),
@@ -113,16 +119,16 @@ func (bot *Bot) Reply(msg *disgord.Message, s disgord.Session, message string) {
 }
 
 // React allows to react with the provided emoji to the given message
-func (bot *Bot) React(msg *disgord.Message, s disgord.Session, emoji interface{}, flags ...disgord.Flag) {
-	err := msg.React(context.Background(), s, emoji, flags...)
+func (bot *Bot) React(msg *disgord.Message, s disgord.Session, emoji interface{}) {
+	err := msg.React(context.Background(), s, emoji)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to react to message")
 	}
 }
 
 // Unreact allows to unreact with the provided emoji to the given message
-func (bot *Bot) Unreact(msg *disgord.Message, s disgord.Session, emoji interface{}, flags ...disgord.Flag) {
-	err := msg.Unreact(context.Background(), s, emoji, flags...)
+func (bot *Bot) Unreact(msg *disgord.Message, s disgord.Session, emoji interface{}) {
+	err := msg.Unreact(context.Background(), s, emoji)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to unreact to message")
 	}
