@@ -113,16 +113,16 @@ func (bot *Bot) Reply(msg *disgord.Message, s disgord.Session, message string) {
 }
 
 // React allows to react with the provided emoji to the given message
-func (bot *Bot) React(msg *disgord.Message, s disgord.Session, emoji interface{}, flags ...disgord.Flag) {
-	err := msg.React(context.Background(), s, emoji, flags...)
+func (bot *Bot) React(msg *disgord.Message, s disgord.Session, emoji interface{}) {
+	err := msg.React(context.Background(), s, emoji)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to react to message")
 	}
 }
 
 // Unreact allows to unreact with the provided emoji to the given message
-func (bot *Bot) Unreact(msg *disgord.Message, s disgord.Session, emoji interface{}, flags ...disgord.Flag) {
-	err := msg.Unreact(context.Background(), s, emoji, flags...)
+func (bot *Bot) Unreact(msg *disgord.Message, s disgord.Session, emoji interface{}) {
+	err := msg.Unreact(context.Background(), s, emoji)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to unreact to message")
 	}
