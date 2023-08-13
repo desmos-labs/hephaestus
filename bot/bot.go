@@ -72,18 +72,24 @@ func (bot *Bot) Start() {
 
 	log.Info().Timestamp().Msg("starting bot")
 
-	// Create a middleware that only accepts messages with a "ping" prefix
-	// tip: use this to identify bot commands
+	// Create a handler that handles all command for generic utilities such as auto ban
+	msgHandler := bot.discord.Gateway()
+	msgHandler.MessageCreate(
+		bot.AutoBanMessage,
+	)
+
+	// Create a middleware that only accepts messages with a given prefix
 	filter, _ := std.NewMsgFilter(context.Background(), bot.discord)
 	filter.SetPrefix(bot.cfg.Prefix)
 
-	handler := bot.discord.Gateway().
+	// Create a handler that handles specific bot commands
+	cmdHandler := bot.discord.Gateway().
 		WithMiddleware(
 			filter.NotByBot,    // Ignore hephaestus messages
 			filter.HasPrefix,   // Message must have the given prefix
 			filter.StripPrefix, // Remove the command prefix from the message
 		)
-	handler.MessageCreate(
+	cmdHandler.MessageCreate(
 		bot.NewCmdHandler(types.CmdHelp, bot.HandleHelp),
 		bot.NewCmdHandler(types.CmdDocs, bot.HandleDocs),
 		bot.NewCmdHandler(types.CmdSend, bot.HandleSendTokens),
