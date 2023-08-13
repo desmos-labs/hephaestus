@@ -28,7 +28,7 @@ func (b *Bot) AutoBanMessage(s disgord.Session, data *disgord.MessageCreate) {
 
 func (b *Bot) containsBannedWords(msg string) bool {
 	for _, bannedWord := range b.cfg.BannedWords {
-		if strings.Contains(msg, bannedWord) {
+		if strings.Contains(strings.ToLower(msg), strings.ToLower(bannedWord)) {
 			return true
 		}
 	}
