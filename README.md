@@ -51,4 +51,8 @@ bot:
 
     - command: "send"
       duration: "0m" # 7 Days
+
+  banned_words:
+    - "Bad word"
+    - "Other bad word"
 ```
